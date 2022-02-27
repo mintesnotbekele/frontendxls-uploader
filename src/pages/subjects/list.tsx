@@ -69,6 +69,7 @@ export const SubjectList: React.FC = () => {
   };
 
   const submitForm = (formData: any) => {
+    console.log(formData);
     setFormLoading(true);
     createSubject(formData)
       .then((res: any) => {

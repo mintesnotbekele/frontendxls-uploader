@@ -27,7 +27,6 @@ import { openNotification } from "components/feedback/notification";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-
 const answerNames = {
   first_option: "First Option",
   second_option: "Second Option",
@@ -112,10 +111,7 @@ export const QuestionCreate: React.FC = () => {
     method: "get",
   });
 
-  const {
-    formProps,
-    saveButtonProps,
-  } = useDrawerForm({
+  const { formProps, saveButtonProps } = useDrawerForm({
     action: "create",
     successNotification: { message: "Created successfully!" },
   });
@@ -136,10 +132,12 @@ export const QuestionCreate: React.FC = () => {
   const _buildFormInputItem = (
     key: string,
     name: any,
-    placeholder: string = ""
+    placeholder: string = "",
+    type: string = "text"
   ) => {
     return (
       <Form.Item
+        labelCol={{offset: 0}}
         key={name + key}
         name={name}
         rules={[
@@ -149,7 +147,7 @@ export const QuestionCreate: React.FC = () => {
           },
         ]}
       >
-        <Input placeholder={placeholder} />
+        <Input type={type} placeholder={placeholder} />
       </Form.Item>
     );
   };
@@ -212,7 +210,7 @@ export const QuestionCreate: React.FC = () => {
             <Form.List name="questions">
               {(fields, { add, remove }) => {
                 return (
-                  <Table dataSource={fields} loading={isLoading} rowKey="id">
+                  <Table dataSource={fields} loading={isLoading} rowKey="id" scroll={{ x: 2000 }}>
                     <Table.Column
                       title="Question"
                       render={(field) => {
@@ -308,6 +306,13 @@ export const QuestionCreate: React.FC = () => {
                             [],
                           placeholder: "Subject",
                         });
+                      }}
+                    />
+                    <Table.Column
+                      title="Year"
+                      render={(field) => {
+                        const name = [field.name, "year"];
+                        return _buildFormInputItem(field.index, name, "Year", "number");
                       }}
                     />
 
