@@ -17,8 +17,13 @@ import {
   Create,
   Select,
   Tabs,
+  Divider,
+  Collapse,
+  Spin
 } from "@pankod/refine";
-import { useState } from "react";
+import { getQuestions } from "apis/question/question";
+import { openNotification } from "components/feedback/notification";
+import { useEffect, useState } from "react";
 
 const answerNames = {
   first_option: "First Option",
@@ -26,6 +31,23 @@ const answerNames = {
   third_option: "Third Option",
   fourth_option: "Fourth Option",
 };
+
+const gradeNames = {
+  grade_8: "Grade 8",
+  grade_12_social: "Grade 12 Social",
+  grade_12_natural: "Grade 12 Natural",
+};
+
+const formItemLayoutWithOutLabel = {
+  wrapperCol: {
+    xs: { span: 24, offset: 0 },
+    sm: { span: 20, offset: 4 },
+  },
+};
+
+const { Panel } = Collapse;
+
+const validationLabel = "Please insert a value to the input field";
 
 const getAnswersLabel = (option: string) => {
   switch (option) {
@@ -39,6 +61,16 @@ const getAnswersLabel = (option: string) => {
       return answerNames.fourth_option;
   }
 };
+const getGradeLabel = (option: string) => {
+  switch (option) {
+    case "grade_8":
+      return gradeNames.grade_8;
+    case "grade_12_social":
+      return gradeNames.grade_12_social;
+    case "grade_12_natural":
+      return gradeNames.grade_12_natural;
+  }
+};
 const initFormData = {
   grade: "grade_8",
   question: "",
@@ -49,73 +81,26 @@ const initFormData = {
   answer: "",
 };
 
-const { RangePicker } = DatePicker;
 export const QuestionList: React.FC = () => {
-  const [activeKey, setActiveKey] = useState(0);
-  const [formDatas, setFormDatas] = useState([initFormData]);
 
-  const apiUrl = useApiUrl();
-  const answers = {};
+  const [isLoading, setIsLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
 
-  const { data, isLoading } = useCustom<any>({
-    url: `${apiUrl}/question/getQuestions`,
-    method: "get",
-  });
-
-  const { data: answerEnumData, isLoading: isLoadingEnum } = useCustom<any>({
-    url: `${apiUrl}/enum/getAnswer`,
-    method: "get",
-  });
-
-  const submitForm = (formData: any) => {};
-  const editTab = (targetKey: any, action: any) => {
-    if (action === "add") {
-      const newFormDatas = [...formDatas];
-      newFormDatas.push(initFormData);
-      setFormDatas(newFormDatas);
-      setActiveKey(activeKey + 1);
-    } else {
-      const cIndex = parseInt(targetKey);
-      const newFormDatas = [...formDatas];
-      newFormDatas.splice(cIndex, 1);
-      setFormDatas(newFormDatas);
-      setActiveKey(cIndex - 1);
-    }
-  };
-  const changeTab = (targetKey: any) => {
-    const cIndex = parseInt(targetKey);
-
-    setActiveKey(cIndex);
-  };
-
-  const Filter: React.FC<{ formProps: FormProps }> = ({ formProps }) => {
-    return (
-      <Form layout="vertical" {...formProps} className="flex justify-end gap-4">
-        <Form.Item name="q">
-          <Input placeholder="Name" prefix={<Icons.SearchOutlined />} />
-        </Form.Item>
-
-        <Form.Item name="createdAt">
-          <RangePicker />
-        </Form.Item>
-        <Form.Item>
-          <Button htmlType="submit" type="primary">
-            Search
-          </Button>
-        </Form.Item>
-      </Form>
-    );
-  };
-
-  const {
-    formProps: createFormProps,
-    drawerProps: createDrawerProps,
-    show: createDrawerShow,
-    saveButtonProps: createSaveButtonProps,
-  } = useDrawerForm({
-    action: "create",
-    successNotification: { message: "Created successfully!" },
-  });
+    useEffect(() => {
+      getQuestionData();
+    }, []);
+  
+    const getQuestionData = () => {
+      setIsLoading(true);
+      getQuestions()
+        .then((res: any) => {
+          setQuestions(res?.data);
+        })
+        .catch((e: any) => {
+          openNotification(`${e?.data?.message}`, "error");
+        })
+        .finally(() => setIsLoading(false));
+    };
 
   return (
     <>
@@ -123,14 +108,8 @@ export const QuestionList: React.FC = () => {
         <Col span={24}>
           <List
             canCreate
-            createButtonProps={{
-              onClick: () => {
-                createDrawerShow();
-              },
-            }}
           >
-            <Table dataSource={data?.data} loading={isLoading} rowKey="id">
-              <Table.Column dataIndex="id" title="Id" />
+            <Table dataSource={questions} loading={isLoading} rowKey="id">
               <Table.Column dataIndex="question" title="Question" />
               <Table.Column
                 title="First option"
@@ -176,103 +155,7 @@ export const QuestionList: React.FC = () => {
           </List>
         </Col>
       </Row>
-      <Drawer {...createDrawerProps} width={'50%'}>
-        <Create saveButtonProps={createSaveButtonProps}>
-          
-            <Tabs
-              type="editable-card"
-              onEdit={editTab}
-              activeKey={`${activeKey}`}
-              onChange={changeTab}
-            >
-              {formDatas.map((pane: any, index: number) => (
-                <Tabs.TabPane
-                  tab={"Question " + (index + 1)}
-                  key={index}
-                  closable={formDatas.length > 1}
-                >
-                  <Form {...createFormProps} onFinish={submitForm} layout="vertical">
-                  <Form.Item
-                    label="Question"
-                    name="question"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="First option"
-                    name="firstOption"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Second option"
-                    name="secondOption"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Third option"
-                    name="thirdOption"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Fourth Option"
-                    name="fourthOption"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Answer"
-                    name="answer"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Select
-                      options={answerEnumData?.data?.answers?.map(
-                        (val: any) => ({
-                          label: getAnswersLabel(val),
-                          value: val,
-                        })
-                      )}
-                      loading={isLoadingEnum}
-                    />
-                  </Form.Item>
-                  </Form>
-                </Tabs.TabPane>
-              ))}
-            </Tabs>
-          
-        </Create>
-      </Drawer>
+
     </>
   );
 };

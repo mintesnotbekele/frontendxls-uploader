@@ -5,7 +5,8 @@ import dataProvider from "@pankod/refine-simple-rest";
 import routerProvider from "@pankod/refine-react-router";
 import { UserList } from "./pages/users/list";
 import { UserShow } from "./pages/users/show";
-import { QuestionList, QuestionShow } from "./pages/questions";
+import { Profile } from "./pages/profile";
+import { QuestionCreate, QuestionList, QuestionShow } from "./pages/questions";
 import { SubjectList } from "./pages/subjects/list";
 import { SubjectShow } from "./pages/subjects/show";
 import { TOKEN_KEY, API_URL, USER_KEY } from "./constants";
@@ -14,6 +15,12 @@ import { Login } from "./pages/login";
 import { CustomSider } from "./components/sider/";
 import { CustomHeader } from "components/header";
 import { login } from "./apis/login/login.api";
+import {
+  QuestionCircleOutlined,
+  SnippetsOutlined,
+  UsergroupAddOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 const { Link } = routerProvider;
 
 const App: React.FC = () => {
@@ -102,16 +109,25 @@ const App: React.FC = () => {
           name: "users",
           list: UserList,
           show: UserShow,
+          icon: <UsergroupAddOutlined />
         },
         {
           name: "questions",
           list: QuestionList,
+          create: QuestionCreate,
           show: QuestionShow,
+          icon: <QuestionCircleOutlined />,
         },
         {
           name: "subjects",
           list: SubjectList,
           show: SubjectShow,
+          icon: <SnippetsOutlined />,
+        },
+        {
+          name: "profile",
+          list: Profile,
+          icon: <UserOutlined />,
         },
       ]}
     />

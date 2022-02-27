@@ -17,6 +17,9 @@ import {
   useApiUrl,
   Tag,
 } from "@pankod/refine";
+import { toggleUserStatus, getUsers } from "apis/users/users.api";
+import { openNotification } from "components/feedback/notification";
+import { useEffect, useState } from "react";
 
 interface PostUsersResponse {
   users: any[];
@@ -25,60 +28,36 @@ interface PostUsersResponse {
 const { RangePicker } = DatePicker;
 export const UserList: React.FC = () => {
   const apiUrl = useApiUrl();
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data, isLoading } = useCustom<any>({
-    url: `${apiUrl}/users/getUsers`,
-    method: "get",
-  });
-  // const { tableProps, sorter, filters, searchFormProps } = useTable<
-  //   IUser,
-  //   HttpError,
-  //   IUserFilterVariables
-  // >({
-  //   onSearch: (params) => {
-  //     const filters: CrudFilters = [];
-  //     const { q, createdAt } = params;
+  useEffect(() => {
+    getUsersData();
+  }, []);
 
-  //     filters.push(
-  //       {
-  //         field: "firstName",
-  //         operator: "contains",
-  //         value: q,
-  //       },
+  const getUsersData = () => {
+    setIsLoading(true);
+    getUsers()
+      .then((res: any) => {
+        setUsers(res?.data?.users);
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setIsLoading(false));
+  };
 
-  //       {
-  //         field: "createdAt",
-  //         operator: "gte",
-  //         value: createdAt ? createdAt[0].toISOString() : undefined,
-  //       },
-  //       {
-  //         field: "createdAt",
-  //         operator: "lte",
-  //         value: createdAt ? createdAt[1].toISOString() : undefined,
-  //       }
-  //     );
-
-  //     return filters;
-  //   },
-  // });
-
-  const Filter: React.FC<{ formProps: FormProps }> = ({ formProps }) => {
-    return (
-      <Form layout="vertical" {...formProps} className="flex justify-end gap-4">
-        <Form.Item name="q">
-          <Input placeholder="Name" prefix={<Icons.SearchOutlined />} />
-        </Form.Item>
-
-        <Form.Item name="createdAt">
-          <RangePicker />
-        </Form.Item>
-        <Form.Item>
-          <Button htmlType="submit" type="primary">
-            Search
-          </Button>
-        </Form.Item>
-      </Form>
-    );
+  const _toggleUserStatus = (id: string) => {
+    setIsLoading(true);
+    toggleUserStatus(id)
+      .then((res: any) => {
+        getUsersData();
+        openNotification("User status has been updated successfully!", "success");
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -90,8 +69,8 @@ export const UserList: React.FC = () => {
       </Col> */}
       <Col span={24}>
         <List>
-          <Table dataSource={data?.data?.users} loading={isLoading} rowKey="id">
-            <Table.Column dataIndex="firstName" title="First Name"/>
+          <Table dataSource={users} loading={isLoading} rowKey="id">
+            <Table.Column dataIndex="firstName" title="First Name" />
             <Table.Column dataIndex="lastName" title="Last Name" />
             <Table.Column dataIndex="gender" title="Gender" />
             <Table.Column dataIndex="phoneNumber" title="Phone Number" />
@@ -99,7 +78,24 @@ export const UserList: React.FC = () => {
               dataIndex="roles"
               title="Roles"
               render={(roles) => {
-                return roles?.map((role: any) => <Tag color="success">{role?.name}</Tag> );
+                return roles?.map((role: any) => (
+                  <Tag color="success">{role?.name}</Tag>
+                ));
+              }}
+            />
+            <Table.Column
+              title="Actions"
+              render={(user) => {
+                return user?.roles?.find(
+                  (role: any) => role.name === "admin"
+                ) ? null : (
+                  <Button
+                    onClick={() => _toggleUserStatus(user.id)}
+                    color="success"
+                  >
+                    {user?.isActive ? "Deactivate" : "Activate"}
+                  </Button>
+                );
               }}
             />
           </Table>

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@craco/craco": "^6.4.2",
     "@pankod/refine": "^2.3.1",
     "@pankod/refine-react-router": "^2.3.1",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@types/react": "^17.0.37",
+    "@types/react-router-dom": "^5.3.3",
     "autoprefixer": "^9.8.8",
     "postcss": "^7.0.39",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
