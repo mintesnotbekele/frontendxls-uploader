@@ -21,17 +21,22 @@ import {
   Collapse,
   Spin,
   useCreateForm,
+  Icon,
+  Upload,
 } from "@pankod/refine";
+import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "apis/question/question";
 import { openNotification } from "components/feedback/notification";
-import { useState } from "react";
+import Papa from "papaparse";
+import { useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
+import TextEditor from "../../components/text-editor";
 
 const answerNames = {
-  first_option: "First Option",
-  second_option: "Second Option",
-  third_option: "Third Option",
-  fourth_option: "Fourth Option",
+  first_option: "A",
+  second_option: "B",
+  third_option: "C",
+  fourth_option: "D",
 };
 
 const gradeNames = {
@@ -53,13 +58,13 @@ const validationLabel = "Please insert a value to the input field";
 
 const getAnswersLabel = (option: string) => {
   switch (option) {
-    case "first_option":
+    case "A":
       return answerNames.first_option;
-    case "second_option":
+    case "B":
       return answerNames.second_option;
-    case "third_option":
+    case "C":
       return answerNames.third_option;
-    case "fourth_option":
+    case "D":
       return answerNames.fourth_option;
   }
 };
@@ -76,15 +81,17 @@ const getGradeLabel = (option: string) => {
 const initFormData = {
   grade: "grade_8",
   question: "",
-  firstOption: "",
-  secondOption: "",
-  thirdOption: "",
-  fourthOption: "",
+  A: "",
+  B: "",
+  C: "",
+  D: "",
   answer: "",
 };
 
 export const QuestionCreate: React.FC = () => {
+  const [formItem] = useForm();
   const [formLoading, setFormLoading] = useState(false);
+
   const history = useHistory();
   const apiUrl = useApiUrl();
 
@@ -137,7 +144,7 @@ export const QuestionCreate: React.FC = () => {
   ) => {
     return (
       <Form.Item
-        labelCol={{offset: 0}}
+        labelCol={{ offset: 0 }}
         key={name + key}
         name={name}
         rules={[
@@ -148,6 +155,31 @@ export const QuestionCreate: React.FC = () => {
         ]}
       >
         <Input type={type} placeholder={placeholder} />
+      </Form.Item>
+    );
+  };
+  const _buildFormTextEditor = (
+    key: string,
+    name: any,
+    placeholder: string = "",
+    required: boolean = true
+  ) => {
+    return (
+      <Form.Item
+        labelCol={{ offset: 0 }}
+        key={name + key}
+        name={name}
+        rules={[
+          {
+            required: required,
+            message: validationLabel,
+          },
+        ]}
+      >
+        <TextEditor
+          placeholder={placeholder}
+          onChange={(val: any) => console.log(val)}
+        />
       </Form.Item>
     );
   };
@@ -173,13 +205,11 @@ export const QuestionCreate: React.FC = () => {
       >
         {items && (
           <Select
-            placeholder={placeholder}
             defaultValue={items[0]}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
             }))}
-            loading={isLoadingEnum}
           />
         )}
       </Form.Item>
@@ -190,6 +220,29 @@ export const QuestionCreate: React.FC = () => {
     <>
       <Spin spinning={formLoading}>
         <Create saveButtonProps={saveButtonProps}>
+          <div className="flex justify-end my-4">
+            <Upload
+              accept=".csv,.xlsx,.xls"
+              showUploadList={false}
+              beforeUpload={(file: any) => {
+                Papa.parse(file, {
+                  header: true,
+                  worker: true,
+                  complete: function (results: any) {
+                    formItem.setFieldsValue({questions: results.data});
+                    formItem.validateFields();
+                  },
+                });
+
+                // Prevent upload
+                return false;
+              }}
+            >
+              <Button>
+                <Icon type="upload" /> Click to Upload
+              </Button>
+            </Upload>
+          </div>
           <Form
             layout="vertical"
             {...formProps}
@@ -199,23 +252,42 @@ export const QuestionCreate: React.FC = () => {
               questions: [
                 {
                   question: "",
-                  firstOption: "",
-                  secondOption: "",
-                  thirdOption: "",
+                  A: "",
+                  B: "",
+                  C: "",
+                  D: "",
                 },
               ],
             }}
+            // form={formItem}
             onFinish={submitForm}
           >
             <Form.List name="questions">
               {(fields, { add, remove }) => {
                 return (
-                  <Table dataSource={fields} loading={isLoading} rowKey="id" scroll={{ x: 2000 }}>
+                  <Table
+                    dataSource={fields}
+                    loading={isLoading}
+                    rowKey="id"
+                    scroll={{ x: "4000px" }}
+                  >
+                    <Table.Column
+                      title="Meta Data"
+                      render={(field) => {
+                        const name = [field.name, "metadata"];
+                        return _buildFormTextEditor(
+                          field.index,
+                          name,
+                          "Meta Data",
+                          false
+                        );
+                      }}
+                    />
                     <Table.Column
                       title="Question"
                       render={(field) => {
                         const name = [field.name, "question"];
-                        return _buildFormInputItem(
+                        return _buildFormTextEditor(
                           field.index,
                           name,
                           "Question"
@@ -225,8 +297,8 @@ export const QuestionCreate: React.FC = () => {
                     <Table.Column
                       title="First option"
                       render={(field) => {
-                        const name = [field.name, "firstOption"];
-                        return _buildFormInputItem(
+                        const name = [field.name, "A"];
+                        return _buildFormTextEditor(
                           field.index,
                           name,
                           "First Option"
@@ -236,8 +308,8 @@ export const QuestionCreate: React.FC = () => {
                     <Table.Column
                       title="Second option"
                       render={(field) => {
-                        const name = [field.name, "secondOption"];
-                        return _buildFormInputItem(
+                        const name = [field.name, "B"];
+                        return _buildFormTextEditor(
                           field.index,
                           name,
                           "Second Option"
@@ -247,8 +319,8 @@ export const QuestionCreate: React.FC = () => {
                     <Table.Column
                       title="Third option"
                       render={(field) => {
-                        const name = [field.name, "thirdOption"];
-                        return _buildFormInputItem(
+                        const name = [field.name, "C"];
+                        return _buildFormTextEditor(
                           field.index,
                           name,
                           "Third Option"
@@ -258,8 +330,8 @@ export const QuestionCreate: React.FC = () => {
                     <Table.Column
                       title="Fourth option"
                       render={(field) => {
-                        const name = [field.name, "fourthOption"];
-                        return _buildFormInputItem(
+                        const name = [field.name, "D"];
+                        return _buildFormTextEditor(
                           field.index,
                           name,
                           "Fourth Option"
@@ -280,6 +352,20 @@ export const QuestionCreate: React.FC = () => {
                         });
                       }}
                     />
+
+                    <Table.Column
+                      title="Description"
+                      render={(field) => {
+                        const name = [field.name, "description"];
+                        return _buildFormTextEditor(
+                          field.index,
+                          name,
+                          "Description",
+                          false
+                        );
+                      }}
+                    />
+
                     <Table.Column
                       title="Grade"
                       render={(field) => {
@@ -312,7 +398,12 @@ export const QuestionCreate: React.FC = () => {
                       title="Year"
                       render={(field) => {
                         const name = [field.name, "year"];
-                        return _buildFormInputItem(field.index, name, "Year", "number");
+                        return _buildFormInputItem(
+                          field.index,
+                          name,
+                          "Year",
+                          "number"
+                        );
                       }}
                     />
 

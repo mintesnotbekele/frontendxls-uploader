@@ -84,7 +84,6 @@ export const Login: React.FC = () => {
                       float: "right",
                       fontSize: "12px",
                     }}
-                    href="#"
                   >
                     Forgot password?
                   </a>

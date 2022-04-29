@@ -1,33 +1,16 @@
 import {
   List,
   Table,
-  useTable,
-  Icons,
   Col,
-  Card,
   Row,
-  FormProps,
   Button,
-  Form,
-  DatePicker,
-  Input,
-  HttpError,
-  CrudFilters,
-  useCustom,
-  useApiUrl,
   Tag,
 } from "@pankod/refine";
 import { toggleUserStatus, getUsers } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
 import { useEffect, useState } from "react";
 
-interface PostUsersResponse {
-  users: any[];
-}
-
-const { RangePicker } = DatePicker;
 export const UserList: React.FC = () => {
-  const apiUrl = useApiUrl();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 

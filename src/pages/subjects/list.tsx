@@ -1,24 +1,14 @@
 import {
   List,
   Table,
-  useTable,
-  Icons,
   Col,
-  Card,
   Row,
-  FormProps,
   Button,
   Form,
-  DatePicker,
   Input,
-  HttpError,
-  CrudFilters,
-  useCustom,
-  useApiUrl,
   Tag,
   Create,
   Drawer,
-  Divider,
   useDrawerForm,
   Spin,
 } from "@pankod/refine";
@@ -31,11 +21,7 @@ import {
   toggleSubjectStatus,
 } from "../../apis/subject/subject.api";
 
-interface PostUsersResponse {
-  users: any[];
-}
 
-const { RangePicker } = DatePicker;
 export const SubjectList: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [subjects, setSubjects] = useState([]);

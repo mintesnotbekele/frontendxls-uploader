@@ -97,7 +97,7 @@ const App: React.FC = () => {
       Title={() => (
         <Link to="/" style={{ margin: "auto", marginRight: "10px" }}>
           <img
-            className="m-auto"
+            className="m-auto my-4"
             src="/logo.svg"
             alt="Mk"
             style={{ width: "100px" }}

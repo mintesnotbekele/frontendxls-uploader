@@ -3,13 +3,10 @@ import {
   useShow,
   Typography,
   Tag,
-  useOne,
   Row,
   Col,
   Descriptions,
-  Badge,
   Checkbox,
-  Timeline,
   Table,
 } from "@pankod/refine";
 

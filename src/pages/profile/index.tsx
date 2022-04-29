@@ -38,7 +38,7 @@ export const Profile: React.FC = () => {
     }
   };
 
-  const { data: genderEnumData, isLoading: isLoadingEnum } = useCustom<any>({
+  const { data: genderEnumData } = useCustom<any>({
     url: `${apiUrl}/enum/getGender`,
     method: "get",
   });
@@ -106,13 +106,11 @@ export const Profile: React.FC = () => {
       >
         {items && (
           <Select
-            placeholder={placeholder}
             defaultValue={items && items[0]}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
             }))}
-            loading={isLoadingEnum}
           />
         )}
       </Form.Item>
@@ -124,7 +122,7 @@ export const Profile: React.FC = () => {
       <Spin spinning={isLoading}>
         <Row>
           <Col span={24}>
-            <Card className="md:w-1/2">
+            <Card className="md:w-1/2" style={{margin: "auto"}}>
               <div className="mb-4">
                 <Avatar
                   src={profileDetail?.profilePicture}
