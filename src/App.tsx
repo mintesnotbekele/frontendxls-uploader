@@ -15,6 +15,7 @@ import { Login } from "./pages/login";
 import { CustomSider } from "./components/sider/";
 import { CustomHeader } from "components/header";
 import { login } from "./apis/login/login.api";
+import {Dashboard} from "./pages/dashboard";
 import {
   QuestionCircleOutlined,
   SnippetsOutlined,
@@ -130,6 +131,7 @@ const App: React.FC = () => {
           icon: <UserOutlined />,
         },
       ]}
+      DashboardPage={() => <Dashboard />}
     />
   );
 };

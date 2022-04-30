@@ -74,7 +74,8 @@ export const UserList: React.FC = () => {
                 ) ? null : (
                   <Button
                     onClick={() => _toggleUserStatus(user.id)}
-                    color="success"
+                    type="primary"
+                    danger ={user?.isActive}
                   >
                     {user?.isActive ? "Deactivate" : "Activate"}
                   </Button>

@@ -229,8 +229,17 @@ export const QuestionCreate: React.FC = () => {
                   header: true,
                   worker: true,
                   complete: function (results: any) {
-                    formItem.setFieldsValue({questions: results.data});
-                    formItem.validateFields();
+                    const questions = results?.data.map((val: any) => ({
+                      ...val,
+                      question: val?.question?.includes("\>")? val.question : `<p>${val.question}</p>`,
+                      A: val?.A?.includes("\>")? val.A : `<p>${val.A}</p>`,
+                      B: val?.B?.includes("\>")? val.B : `<p>${val.B}</p>`,
+                      C: val?.C?.includes("\>")? val.C : `<p>${val.C}</p>`,
+                      D: val?.D?.includes("\>")? val.D : `<p>${val.D}</p>`,
+                      description: val?.description?.includes("\>")? val.description : `<p>${val.description}</p>`,
+                      metadata: val?.metadata?.includes("\>")? val.metadata : `<p>${val.metadata}</p>`,
+                    }));
+                    formItem.setFieldsValue({ questions });
                   },
                 });
 
@@ -259,7 +268,7 @@ export const QuestionCreate: React.FC = () => {
                 },
               ],
             }}
-            // form={formItem}
+            form={formItem}
             onFinish={submitForm}
           >
             <Form.List name="questions">

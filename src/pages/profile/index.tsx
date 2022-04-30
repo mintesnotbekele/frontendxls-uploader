@@ -1,4 +1,4 @@
-import { UserOutlined } from "@ant-design/icons";
+import { CloseOutlined, EditOutlined, UserOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Button,
@@ -6,16 +6,19 @@ import {
   Col,
   Form,
   Input,
+  message,
   Row,
   Select,
   Spin,
+  Upload,
   useApiUrl,
   useCustom,
 } from "@pankod/refine";
 import { openNotification } from "components/feedback/notification";
+import { API_URL, TOKEN_KEY } from "../../constants";
 
 import { useEffect, useState } from "react";
-import { getProfile } from "../../apis/users/users.api";
+import { getProfile, updateProfile } from "../../apis/users/users.api";
 const validationLabel = "Please insert a value to the input field";
 export const Profile: React.FC = () => {
   const [profileDetail, setProfileDetail] = useState({
@@ -28,6 +31,7 @@ export const Profile: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const apiUrl = useApiUrl();
+  const [isEditing, setIsEditing] = useState(false);
 
   const getGenderLabel = (option: string) => {
     switch (option) {
@@ -35,6 +39,8 @@ export const Profile: React.FC = () => {
         return "Male";
       case "female":
         return "Female";
+      default:
+        return "Male";
     }
   };
 
@@ -59,7 +65,17 @@ export const Profile: React.FC = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const submitForm = (formData: any) => {};
+  const submitForm = (formData: any) => {
+    setIsLoading(true);
+    updateProfile(formData)
+      .then((res: any) => {
+        openNotification(`Data updated successfully!`, "success");
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   const _buildFormInputItem = (
     key: string,
@@ -80,7 +96,7 @@ export const Profile: React.FC = () => {
           },
         ]}
       >
-        <Input disabled={disabled} placeholder={placeholder} />
+        <Input disabled={disabled || !isEditing} placeholder={placeholder} />
       </Form.Item>
     );
   };
@@ -88,6 +104,7 @@ export const Profile: React.FC = () => {
   const _buildFormSelectionItem = ({
     key,
     name,
+    defaultValue,
     items,
     callback,
     placeholder,
@@ -96,7 +113,6 @@ export const Profile: React.FC = () => {
       <Form.Item
         key={name + key}
         name={name}
-        initialValue={items && items[0]}
         rules={[
           {
             required: true,
@@ -104,9 +120,10 @@ export const Profile: React.FC = () => {
           },
         ]}
       >
-        {items && (
+        {defaultValue && items && (
           <Select
-            defaultValue={items && items[0]}
+            disabled={!isEditing}
+            defaultValue={defaultValue}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
@@ -122,13 +139,55 @@ export const Profile: React.FC = () => {
       <Spin spinning={isLoading}>
         <Row>
           <Col span={24}>
-            <Card className="md:w-1/2" style={{margin: "auto"}}>
-              <div className="mb-4">
-                <Avatar
-                  src={profileDetail?.profilePicture}
-                  size="large"
-                  icon={<UserOutlined />}
-                />
+            <Card className="md:w-1/2" style={{ margin: "auto" }}>
+              <div className="flex justify-between">
+                <div className="mb-4">
+                  <Upload
+                    {...{
+                      name: "file",
+                      action: `${API_URL}/users/updateProfilePicture`,
+                      headers: {
+                        authorization:
+                          `Bearer ${localStorage.getItem(TOKEN_KEY)}` || "",
+                      },
+                      onChange(info: any) {
+                        if (info.file.status !== "uploading") {
+                          console.log(info.file, info.fileList);
+                        }
+                        if (info.file.status === "done") {
+                          setProfileDetail({
+                            ...profileDetail,
+                            profilePicture: info.file.response.profilePicture,
+                          });
+                          message.success(
+                            `${info.file.name} file uploaded successfully`
+                          );
+                        } else if (info.file.status === "error") {
+                          message.error(
+                            `${info.file.name} file upload failed.`
+                          );
+                        }
+                      },
+                    }}
+                  >
+                    <Avatar
+                      src={`${profileDetail?.profilePicture}`}
+                      size={64}
+                      icon={<UserOutlined />}
+                    />
+                  </Upload>
+                </div>
+                <div className="mb-4 ">
+                  {!isEditing ? (
+                    <Button type="link" onClick={() => setIsEditing(true)}>
+                      <EditOutlined />
+                    </Button>
+                  ) : (
+                    <Button type="link" onClick={() => setIsEditing(false)}>
+                      <CloseOutlined />
+                    </Button>
+                  )}
+                </div>
               </div>
               {profileDetail && (
                 <Form layout="vertical" name="form" onFinish={submitForm}>
@@ -158,14 +217,17 @@ export const Profile: React.FC = () => {
                     _buildFormSelectionItem({
                       key: "gender",
                       name: "gender",
+                      defaultValue: profileDetail?.gender,
                       items: genderEnumData?.data?.genders ?? [],
                       placeholder: "Gender",
                       callback: getGenderLabel,
                     })}
                   <div className="flex justify-end ml-auto">
-                    <Button>
-                      <input type="submit" value="Submit" />
-                    </Button>
+                    {isEditing ? (
+                      <Button htmlType="submit" type="primary">
+                        Submit
+                      </Button>
+                    ) : null}
                   </div>
                 </Form>
               )}

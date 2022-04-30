@@ -19,6 +19,14 @@ export const getProfile = (): any => {
     });
 };
 
+export const updateProfile = (data: any): any => {
+  return httpService
+    .put(`${usersEndPoint.updateProfile}`, data)
+    .then((response) => {
+      return response;
+    });
+};
+
 export const toggleUserStatus = (id : string): any => {
   return httpService
     .post(`${usersEndPoint.toggleUserStatus}`, { id})
