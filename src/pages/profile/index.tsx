@@ -15,7 +15,7 @@ import {
   useCustom,
 } from "@pankod/refine";
 import { openNotification } from "components/feedback/notification";
-import { API_URL, TOKEN_KEY } from "../../constants";
+import { API_URL, TOKEN_KEY, USER_KEY } from "../../constants";
 
 import { useEffect, useState } from "react";
 import { getProfile, updateProfile } from "../../apis/users/users.api";
@@ -54,6 +54,9 @@ export const Profile: React.FC = () => {
   }, []);
 
   const getProfileData = () => {
+    // const userData = JSON.parse(localStorage.getItem(USER_KEY) || "{}");
+    // setProfileDetail(userData);
+
     setIsLoading(true);
     getProfile()
       .then((res: any) => {

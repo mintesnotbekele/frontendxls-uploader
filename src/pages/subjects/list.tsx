@@ -1,3 +1,4 @@
+import { EditOutlined } from "@ant-design/icons";
 import {
   List,
   Table,
@@ -11,6 +12,10 @@ import {
   Drawer,
   useDrawerForm,
   Spin,
+  Switch,
+  ShowButton,
+  EditButton,
+  Edit,
 } from "@pankod/refine";
 import { openNotification } from "components/feedback/notification";
 
@@ -19,13 +24,15 @@ import {
   createSubject,
   getSubjects,
   toggleSubjectStatus,
+  updateSubject,
 } from "../../apis/subject/subject.api";
-
 
 export const SubjectList: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [updateId, setUpdateId] = useState("");
 
   const {
     formProps,
@@ -37,7 +44,6 @@ export const SubjectList: React.FC = () => {
     action: "create",
     successNotification: { message: "Created successfully!" },
   });
-
   useEffect(() => {
     getSubjectsData();
   }, []);
@@ -55,13 +61,28 @@ export const SubjectList: React.FC = () => {
   };
 
   const submitForm = (formData: any) => {
-    console.log(formData);
     setFormLoading(true);
     createSubject(formData)
       .then((res: any) => {
         createDrawerclose();
+        setIsUpdate(false);
         getSubjectsData();
         openNotification("Subject has been created successfully!", "success");
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setFormLoading(false));
+  };
+
+  const editForm = (formData: any) => {
+    setFormLoading(true);
+    updateSubject({...formData, id: updateId})
+      .then((res: any) => {
+        createDrawerclose();
+        setIsUpdate(false);
+        getSubjectsData();
+        openNotification("Subject has been updated successfully!", "success");
       })
       .catch((e: any) => {
         openNotification(`${e?.data?.message}`, "error");
@@ -90,33 +111,52 @@ export const SubjectList: React.FC = () => {
             canCreate
             createButtonProps={{
               onClick: () => {
+                setIsUpdate(false);
                 createDrawerShow();
               },
             }}
           >
             <Table dataSource={subjects} loading={isLoading} rowKey="id">
+              <Table.Column dataIndex="id" title="ID" />
               <Table.Column dataIndex="name" title="Subject name" />
               <Table.Column
-                dataIndex="isActive"
                 title="Is Active"
-                render={(isActive) => {
+                render={(subject) => {
                   return (
-                    <Tag color={isActive ? "success" : "danger"}>
-                      {isActive ? "Active" : "Deactivated"}
-                    </Tag>
+                    <Switch
+                      checked={subject?.isActive}
+                      onClick={() => _toggleSubjectStatus(subject.id)}
+                    ></Switch>
                   );
                 }}
               />
               <Table.Column
                 title="Actions"
+                align="right"
                 render={(subject) => {
                   return (
-                    <Button
-                      onClick={() => _toggleSubjectStatus(subject.id)}
-                      color="success"
-                    >
-                      {subject?.isActive ? "Deactivate" : "Activate"}
-                    </Button>
+                    <div className="flex gap-1 items-center justify-end">
+                      <ShowButton
+                        type="link"
+                        title=""
+                        size="middle"
+                        hideText
+                        resource={subject}
+                        recordItemId={subject?.id}
+                      />
+                      <Button
+                        type="link"
+                        size="middle"
+                        onClick={() => {
+                          setUpdateId(subject?.id);
+                          formProps.form.setFieldsValue(subject);
+                          setIsUpdate(true);
+                          createDrawerShow();
+                        }}
+                      >
+                        <EditOutlined />
+                      </Button>
+                    </div>
                   );
                 }}
               />
@@ -126,8 +166,15 @@ export const SubjectList: React.FC = () => {
       </Row>
       <Drawer {...createDrawerProps}>
         <Spin spinning={formLoading}>
-          <Create saveButtonProps={saveButtonProps}>
-            <Form {...formProps} name="form" onFinish={submitForm}>
+          <Create
+            saveButtonProps={saveButtonProps}
+            title="Create or update subject"
+          >
+            <Form
+              {...formProps}
+              name="form"
+              onFinish={isUpdate ? editForm : submitForm}
+            >
               <Form.Item
                 name={["name"]}
                 label="Subject Name"

@@ -1,106 +1,57 @@
+import { UserOutlined } from "@ant-design/icons";
 import {
   Show,
-  useShow,
   Typography,
-  Tag,
-  Row,
-  Col,
   Descriptions,
-  Checkbox,
-  Table,
+  useCustom,
+  useApiUrl,
+  useShow,
+  Avatar,
 } from "@pankod/refine";
 
 const { Title, Text } = Typography;
+const getGenderLabel = (option: string) => {
+  switch (option) {
+    case "male":
+      return "Male";
+    case "female":
+      return "Female";
+    default:
+      return "Male";
+  }
+};
 
 export const UserShow = () => {
-  const { queryResult } = useShow();
+  const { queryResult } = useShow({
+    resource: "users/getUser",
+    errorNotification: { message: "Error getting data" },
+  });
   const { data, isLoading } = queryResult;
+
   const record = data?.data;
 
   return (
-    <Show isLoading={isLoading}>
-      <Row gutter={24} className="flex justify-end flex-wrap">
-        <Col>
-          <Title level={5}>Address</Title>
-          <Text>{`${record?.address?.houseNumber ?? ""}, ${
-            record?.address?.woredaOrKebele ?? ""
-          }, ${record?.address?.subCity ?? ""}, ${
-            record?.address?.city ?? ""
-          }`}</Text>
-        </Col>
-        <Col>
-          <Title level={5}>Department</Title>
-          <Text>{record?.department?.name}</Text>
-        </Col>
-      </Row>
-      <Descriptions
-        title={`${record?.firstName} ${record?.middleName ?? ""} ${
-          record?.lastName
-        } (${record?.role?.name})`}
-        layout="vertical"
-        bordered
-      >
-        <Descriptions.Item span={2} label="Email">
-          {record?.email}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phone Number">
-          {record?.phoneNumber}
-        </Descriptions.Item>
+    <Show isLoading={isLoading} resource="users/getUser" title="Show user info" >
+      <div className="mb-2">
+        <Avatar
+          src={`${record?.profilePicture}`}
+          size={64}
+          icon={<UserOutlined />}
+        />
+      </div>
+      <Title level={5}>Id</Title>
+      <Text>{record?.id}</Text>
 
-        <Descriptions.Item label="Status">
-          <Checkbox checked={!record?.blocked}>
-            {record?.blocked ? "Blocked" : "Active"}
-          </Checkbox>
-        </Descriptions.Item>
+      <Title level={5}>Name</Title>
+      <Text>
+        {record?.firstName} {record?.lastName}
+      </Text>
 
-        <Descriptions.Item label="Gender">
-          <Tag color="success">{record?.gender}</Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label="Birth Date">
-          {record?.birthDate}
-        </Descriptions.Item>
+      <Title level={5}>Phone Number</Title>
+      <Text>{record?.phoneNumber}</Text>
 
-        {record?.educationStatus && (
-          <Descriptions.Item span={3} label="Education Status">
-            <Table
-              bordered
-              pagination={false}
-              dataSource={record?.educationStatus}
-              rowKey="id"
-            >
-              <Table.Column dataIndex="department" title="Department" />
-              <Table.Column
-                dataIndex="graduationDate"
-                title="Graduation Date"
-              />
-              <Table.Column dataIndex="level" title="Level" />
-            </Table>
-          </Descriptions.Item>
-        )}
-        {record?.christianityName && (
-          <Descriptions.Item span={2} label="Christianity Name">
-            {record?.christianityName}
-          </Descriptions.Item>
-        )}
-        {record?.church && (
-          <Descriptions.Item label="Church">{record?.church}</Descriptions.Item>
-        )}
-        {record?.salary && (
-          <Descriptions.Item span={2} label="Salary">
-            {record?.salary} {record?.currency}
-          </Descriptions.Item>
-        )}
-        {record?.maritalStatus && (
-          <Descriptions.Item label="Marital Status">
-            {record?.maritalStatus}
-          </Descriptions.Item>
-        )}
-        {record?.detail && (
-          <Descriptions.Item span={3} label="Detail">
-            {record?.detail}
-          </Descriptions.Item>
-        )}
-      </Descriptions>
+      <Title level={5}>Gender</Title>
+      <Text>{getGenderLabel(record?.gender)}</Text>
     </Show>
   );
 };

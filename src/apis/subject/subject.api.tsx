@@ -24,3 +24,11 @@ export const createSubject = (params:any): any => {
       return response;
     });
 };
+
+export const updateSubject = (params:any): any => {
+  return httpService
+    .put(`${subjectEndPoint.updateSubject}`, params)
+    .then((response) => {
+      return response;
+    });
+};

@@ -1,11 +1,4 @@
-import {
-  List,
-  Table,
-  Col,
-  Row,
-  Button,
-  Tag,
-} from "@pankod/refine";
+import { List, Table, Col, Row, Button, Tag, Switch, ShowButton } from "@pankod/refine";
 import { toggleUserStatus, getUsers } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
 import { useEffect, useState } from "react";
@@ -35,7 +28,10 @@ export const UserList: React.FC = () => {
     toggleUserStatus(id)
       .then((res: any) => {
         getUsersData();
-        openNotification("User status has been updated successfully!", "success");
+        openNotification(
+          "User status has been updated successfully!",
+          "success"
+        );
       })
       .catch((e: any) => {
         openNotification(`${e?.data?.message}`, "error");
@@ -72,13 +68,13 @@ export const UserList: React.FC = () => {
                 return user?.roles?.find(
                   (role: any) => role.name === "admin"
                 ) ? null : (
-                  <Button
-                    onClick={() => _toggleUserStatus(user.id)}
-                    type="primary"
-                    danger ={user?.isActive}
-                  >
-                    {user?.isActive ? "Deactivate" : "Activate"}
-                  </Button>
+                  <div className="flex gap-1 items-center">
+                    <Switch
+                      checked={user?.isActive}
+                      onClick={() => _toggleUserStatus(user.id)}
+                    ></Switch>
+                    <ShowButton type="link" size="middle" hideText recordItemId={user?.id}/>
+                  </div>
                 );
               }}
             />

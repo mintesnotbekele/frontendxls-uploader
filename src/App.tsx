@@ -84,9 +84,9 @@ const App: React.FC = () => {
           <AntdLayout>
             <CustomSider />
 
-            <AntdLayout.Content className="min-h-screen">
+            <AntdLayout.Content style={{minHeight: '100vh'}}>
               <CustomHeader />
-              <AntdLayout.Content className="p-3 h-full">
+              <AntdLayout.Content className="p-3">
                 {children}
               </AntdLayout.Content>
               <Footer />
