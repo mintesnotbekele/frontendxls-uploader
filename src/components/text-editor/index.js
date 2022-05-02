@@ -1,7 +1,7 @@
 import { Component } from "react";
 import ReactQuill from "react-quill";
 
-const TextEditor = ({placeholder, onChange}) => {
+const TextEditor = ({ placeholder, onChange, value = "" }) => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -32,13 +32,14 @@ const TextEditor = ({placeholder, onChange}) => {
   ];
 
   return (
-    <div className="text-editor" >
+    <div className="text-editor">
       <ReactQuill
         theme="snow"
         modules={modules}
         formats={formats}
         placeholder={placeholder}
         onChange={onChange}
+        value={value}
       ></ReactQuill>
     </div>
   );

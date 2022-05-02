@@ -1,106 +1,78 @@
-import {
-  Show,
-  useShow,
-  Typography,
-  Tag,
-  Row,
-  Col,
-  Descriptions,
-  Checkbox,
-  Table,
-} from "@pankod/refine";
+import { Show, useShow, Typography, Checkbox } from "@pankod/refine";
 
 const { Title, Text } = Typography;
 
 export const QuestionShow = () => {
-  const { queryResult } = useShow();
+  const { queryResult } = useShow({
+    resource: "question/getQuestion",
+    errorNotification: { message: "Error getting data" },
+  });
   const { data, isLoading } = queryResult;
+
   const record = data?.data;
 
   return (
     <Show isLoading={isLoading}>
-      <Row gutter={24} className="flex justify-end flex-wrap">
-        <Col>
-          <Title level={5}>Address</Title>
-          <Text>{`${record?.address?.houseNumber ?? ""}, ${
-            record?.address?.woredaOrKebele ?? ""
-          }, ${record?.address?.subCity ?? ""}, ${
-            record?.address?.city ?? ""
-          }`}</Text>
-        </Col>
-        <Col>
-          <Title level={5}>Department</Title>
-          <Text>{record?.department?.name}</Text>
-        </Col>
-      </Row>
-      <Descriptions
-        title={`${record?.firstName} ${record?.middleName ?? ""} ${
-          record?.lastName
-        } (${record?.role?.name})`}
-        layout="vertical"
-        bordered
-      >
-        <Descriptions.Item span={2} label="Email">
-          {record?.email}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phone Number">
-          {record?.phoneNumber}
-        </Descriptions.Item>
-
-        <Descriptions.Item label="Status">
-          <Checkbox checked={!record?.blocked}>
-            {record?.blocked ? "Blocked" : "Active"}
-          </Checkbox>
-        </Descriptions.Item>
-
-        <Descriptions.Item label="Gender">
-          <Tag color="success">{record?.gender}</Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label="Birth Date">
-          {record?.birthDate}
-        </Descriptions.Item>
-
-        {record?.educationStatus && (
-          <Descriptions.Item span={3} label="Education Status">
-            <Table
-              bordered
-              pagination={false}
-              dataSource={record?.educationStatus}
-              rowKey="id"
-            >
-              <Table.Column dataIndex="department" title="Department" />
-              <Table.Column
-                dataIndex="graduationDate"
-                title="Graduation Date"
-              />
-              <Table.Column dataIndex="level" title="Level" />
-            </Table>
-          </Descriptions.Item>
-        )}
-        {record?.christianityName && (
-          <Descriptions.Item span={2} label="Christianity Name">
-            {record?.christianityName}
-          </Descriptions.Item>
-        )}
-        {record?.church && (
-          <Descriptions.Item label="Church">{record?.church}</Descriptions.Item>
-        )}
-        {record?.salary && (
-          <Descriptions.Item span={2} label="Salary">
-            {record?.salary} {record?.currency}
-          </Descriptions.Item>
-        )}
-        {record?.maritalStatus && (
-          <Descriptions.Item label="Marital Status">
-            {record?.maritalStatus}
-          </Descriptions.Item>
-        )}
-        {record?.detail && (
-          <Descriptions.Item span={3} label="Detail">
-            {record?.detail}
-          </Descriptions.Item>
-        )}
-      </Descriptions>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: record?.metadata?.replace(/(<? *script)/gi, "illegalscript"),
+        }}
+      ></div>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: record?.description?.replace(
+            /(<? *script)/gi,
+            "illegalscript"
+          ),
+        }}
+      ></div>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: record?.question?.replace(/(<? *script)/gi, "illegalscript"),
+        }}
+      ></div>
+      <div className="mx-5">
+        <div className="flex gap-2">
+          <Title level={5}>
+            <Checkbox checked={record?.answer === "A"}>A.</Checkbox>
+          </Title>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: record?.A?.replace(/(<? *script)/gi, "illegalscript"),
+            }}
+          ></div>
+        </div>
+        <div className="flex gap-2">
+          <Title level={5}>
+            <Checkbox checked={record?.answer === "B"}>B.</Checkbox>
+          </Title>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: record?.B?.replace(/(<? *script)/gi, "illegalscript"),
+            }}
+          ></div>
+        </div>
+        <div className="flex gap-2">
+          <Title level={5}>
+            <Checkbox checked={record?.answer === "C"}>C.</Checkbox>
+          </Title>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: record?.C?.replace(/(<? *script)/gi, "illegalscript"),
+            }}
+          ></div>
+        </div>
+        <div className="flex gap-2">
+          <Title level={5}>
+            <Checkbox checked={record?.answer === "D"}>D.</Checkbox>
+          </Title>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: record?.D?.replace(/(<? *script)/gi, "illegalscript"),
+            }}
+          ></div>
+        </div>
+      </div>
     </Show>
   );
 };

@@ -11,9 +11,25 @@ export const getQuestions = (): any => {
     });
 };
 
-export const createQuestion = (params:any): any => {
+export const updateQuestion = (params: any): any => {
+  return httpService
+    .put(`${questionEndPoint.updateQuestion}`, params)
+    .then((response) => {
+      return response;
+    });
+};
+
+export const createQuestion = (params: any): any => {
   return httpService
     .post(`${questionEndPoint.addQuestions}`, params)
+    .then((response) => {
+      return response;
+    });
+};
+
+export const deleteQuestion = (id: string): any => {
+  return httpService
+    .delete(`${questionEndPoint.deleteQuestion}/${id}`)
     .then((response) => {
       return response;
     });

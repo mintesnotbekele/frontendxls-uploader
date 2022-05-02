@@ -6,7 +6,7 @@ import routerProvider from "@pankod/refine-react-router";
 import { UserList } from "./pages/users/list";
 import { UserShow } from "./pages/users/show";
 import { Profile } from "./pages/profile";
-import { QuestionCreate, QuestionList, QuestionShow } from "./pages/questions";
+import { QuestionCreate, QuestionList, QuestionShow, QuestionEdit } from "./pages/questions";
 import { SubjectList } from "./pages/subjects/list";
 import { SubjectShow } from "./pages/subjects/show";
 import { TOKEN_KEY, API_URL, USER_KEY } from "./constants";
@@ -116,6 +116,7 @@ const App: React.FC = () => {
           name: "questions",
           list: QuestionList,
           create: QuestionCreate,
+          edit: QuestionEdit,
           show: QuestionShow,
           icon: <QuestionCircleOutlined />,
         },

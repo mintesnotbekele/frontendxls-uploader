@@ -45,12 +45,6 @@ const gradeNames = {
   grade_12_natural: "Grade 12 Natural",
 };
 
-const formItemLayoutWithOutLabel = {
-  wrapperCol: {
-    xs: { span: 24, offset: 0 },
-    sm: { span: 20, offset: 4 },
-  },
-};
 
 const { Panel } = Collapse;
 
@@ -89,7 +83,6 @@ const initFormData = {
 };
 
 export const QuestionCreate: React.FC = () => {
-  const [formItem] = useForm();
   const [formLoading, setFormLoading] = useState(false);
 
   const history = useHistory();
@@ -179,6 +172,7 @@ export const QuestionCreate: React.FC = () => {
         <TextEditor
           placeholder={placeholder}
           onChange={(val: any) => console.log(val)}
+          value = {formProps.form.getFieldValue(name)}
         />
       </Form.Item>
     );
@@ -205,7 +199,7 @@ export const QuestionCreate: React.FC = () => {
       >
         {items && (
           <Select
-            defaultValue={items[0]}
+            inputValue={items[0]}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
@@ -231,15 +225,15 @@ export const QuestionCreate: React.FC = () => {
                   complete: function (results: any) {
                     const questions = results?.data.map((val: any) => ({
                       ...val,
-                      question: val?.question?.includes("\>")? val.question : `<p>${val.question}</p>`,
-                      A: val?.A?.includes("\>")? val.A : `<p>${val.A}</p>`,
-                      B: val?.B?.includes("\>")? val.B : `<p>${val.B}</p>`,
-                      C: val?.C?.includes("\>")? val.C : `<p>${val.C}</p>`,
-                      D: val?.D?.includes("\>")? val.D : `<p>${val.D}</p>`,
-                      description: val?.description?.includes("\>")? val.description : `<p>${val.description}</p>`,
-                      metadata: val?.metadata?.includes("\>")? val.metadata : `<p>${val.metadata}</p>`,
+                      question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
+                      A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
+                      B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
+                      C: val?.C?.includes("\>")? val.C : val.C && `<p>${val.C}</p>`,
+                      D: val?.D?.includes("\>")? val.D : val.D && `<p>${val.D}</p>`,
+                      description: val?.description?.includes("\>")? val.description : val.description && `<p>${val.description}</p>`,
+                      metadata: val?.metadata?.includes("\>")? val?.metadata : val.metadata && `<p>${val.metadata}</p>`,
                     }));
-                    formItem.setFieldsValue({ questions });
+                    formProps.form.setFieldsValue({ questions });
                   },
                 });
 
@@ -256,7 +250,6 @@ export const QuestionCreate: React.FC = () => {
             layout="vertical"
             {...formProps}
             name="form"
-            {...formItemLayoutWithOutLabel}
             initialValues={{
               questions: [
                 {
@@ -268,7 +261,6 @@ export const QuestionCreate: React.FC = () => {
                 },
               ],
             }}
-            form={formItem}
             onFinish={submitForm}
           >
             <Form.List name="questions">
@@ -279,9 +271,11 @@ export const QuestionCreate: React.FC = () => {
                     loading={isLoading}
                     rowKey="id"
                     scroll={{ x: "4000px" }}
+                    key="questions"
                   >
                     <Table.Column
                       title="Meta Data"
+                      key={"metadata"}
                       render={(field) => {
                         const name = [field.name, "metadata"];
                         return _buildFormTextEditor(
@@ -294,6 +288,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="Question"
+                      key={"question"}
                       render={(field) => {
                         const name = [field.name, "question"];
                         return _buildFormTextEditor(
@@ -305,6 +300,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="First option"
+                      key={"A"}
                       render={(field) => {
                         const name = [field.name, "A"];
                         return _buildFormTextEditor(
@@ -316,6 +312,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="Second option"
+                      key={"B"}
                       render={(field) => {
                         const name = [field.name, "B"];
                         return _buildFormTextEditor(
@@ -327,6 +324,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="Third option"
+                      key={"C"}
                       render={(field) => {
                         const name = [field.name, "C"];
                         return _buildFormTextEditor(
@@ -338,6 +336,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="Fourth option"
+                      key={"D"}
                       render={(field) => {
                         const name = [field.name, "D"];
                         return _buildFormTextEditor(
@@ -350,6 +349,7 @@ export const QuestionCreate: React.FC = () => {
 
                     <Table.Column
                       title="Answer"
+                      key={"answer"}
                       render={(field) => {
                         const name = [field.name, "answer"];
                         return _buildFormSelectionItem({
@@ -364,6 +364,7 @@ export const QuestionCreate: React.FC = () => {
 
                     <Table.Column
                       title="Description"
+                      key={"description"}
                       render={(field) => {
                         const name = [field.name, "description"];
                         return _buildFormTextEditor(
@@ -377,6 +378,7 @@ export const QuestionCreate: React.FC = () => {
 
                     <Table.Column
                       title="Grade"
+                      key={"grade"}
                       render={(field) => {
                         const name = [field.name, "grade"];
                         return _buildFormSelectionItem({
@@ -391,6 +393,7 @@ export const QuestionCreate: React.FC = () => {
 
                     <Table.Column
                       title="Subject"
+                      key={"subject"}
                       render={(field) => {
                         const name = [field.name, "subject"];
                         return _buildFormSelectionItem({
@@ -405,6 +408,7 @@ export const QuestionCreate: React.FC = () => {
                     />
                     <Table.Column
                       title="Year"
+                      key={"year"}
                       render={(field) => {
                         const name = [field.name, "year"];
                         return _buildFormInputItem(
@@ -417,6 +421,7 @@ export const QuestionCreate: React.FC = () => {
                     />
 
                     <Table.Column
+                      key={"action"}
                       title={
                         <div className="flex gap-2 justify-center">
                           <span className="m-auto">Action</span>
