@@ -22,6 +22,7 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { ChangePassword } from "pages/password";
 const { Link } = routerProvider;
 
 const App: React.FC = () => {
@@ -129,6 +130,11 @@ const App: React.FC = () => {
         {
           name: "profile",
           list: Profile,
+          icon: <UserOutlined />,
+        },
+        {
+          name: "password",
+          list: ChangePassword,
           icon: <UserOutlined />,
         },
       ]}

@@ -32,7 +32,7 @@ const TextEditor = ({ placeholder, onChange, value = "" }) => {
   ];
 
   return (
-    <div className="text-editor">
+    <div className="text-editor" style={{maxWidth: "300px"}}>
       <ReactQuill
         theme="snow"
         modules={modules}

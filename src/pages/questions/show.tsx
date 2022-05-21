@@ -14,11 +14,13 @@ export const QuestionShow = () => {
   return (
     <Show isLoading={isLoading}>
       <div
+        style={{ maxWidth: "300px" }}
         dangerouslySetInnerHTML={{
           __html: record?.metadata?.replace(/(<? *script)/gi, "illegalscript"),
         }}
       ></div>
       <div
+        style={{ maxWidth: "300px" }}
         dangerouslySetInnerHTML={{
           __html: record?.description?.replace(
             /(<? *script)/gi,
@@ -27,6 +29,7 @@ export const QuestionShow = () => {
         }}
       ></div>
       <div
+        style={{ maxWidth: "300px" }}
         dangerouslySetInnerHTML={{
           __html: record?.question?.replace(/(<? *script)/gi, "illegalscript"),
         }}

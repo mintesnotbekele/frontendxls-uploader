@@ -16,6 +16,7 @@ import {
 import PieChart from "charts/pie-chart";
 import RadarChart from "charts/radar-chart";
 import VerticalChart from "charts/vertical-chart";
+import ExcelExport from "components/excel";
 import { openNotification } from "components/feedback/notification";
 
 import { useEffect, useState } from "react";
@@ -61,6 +62,7 @@ export const Dashboard: React.FC = () => {
   return (
     <>
       <Spin spinning={isLoading}>
+        <ExcelExport analytics={analytics}/>
         <Row gutter={[12, 12]}>
           <Col span={12}>
             <Card>
@@ -80,8 +82,9 @@ export const Dashboard: React.FC = () => {
               <RadarChart
                 title="Payments Made"
                 labels={
-                  analytics?.payments.map((item: any) => months[item.month - 1]) ||
-                  []
+                  analytics?.payments.map(
+                    (item: any) => months[item.month - 1]
+                  ) || []
                 }
                 data={analytics?.payments.map((item: any) => item.count) || []}
               />
@@ -104,8 +107,7 @@ export const Dashboard: React.FC = () => {
               <VerticalChart
                 title="Questions Added"
                 labels={
-                  analytics?.questions.map((item: any) => item?.year) ||
-                  []
+                  analytics?.questions.map((item: any) => item?.year) || []
                 }
                 data={analytics?.questions.map((item: any) => item.count) || []}
               />

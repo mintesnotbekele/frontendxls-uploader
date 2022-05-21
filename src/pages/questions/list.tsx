@@ -67,7 +67,7 @@ export const QuestionList: React.FC = () => {
                 title="Meta Data"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data || "No Meta Data",
                       }}
@@ -80,7 +80,7 @@ export const QuestionList: React.FC = () => {
                 title="Question"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data,
                       }}
@@ -92,7 +92,7 @@ export const QuestionList: React.FC = () => {
                 title="First option"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data?.A.replace(
                           /(<? *script)/gi,
@@ -107,7 +107,7 @@ export const QuestionList: React.FC = () => {
                 title="Second option"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data?.B.replace(
                           /(<? *script)/gi,
@@ -122,7 +122,7 @@ export const QuestionList: React.FC = () => {
                 title="Third option"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data?.C.replace(
                           /(<? *script)/gi,
@@ -137,7 +137,7 @@ export const QuestionList: React.FC = () => {
                 title="Fourth option"
                 render={(data) => {
                   return (
-                    <div
+                    <div style={{maxWidth: "300px"}} 
                       dangerouslySetInnerHTML={{
                         __html: data?.D.replace(
                           /(<? *script)/gi,
