@@ -3,12 +3,12 @@ import { ILogin } from "interfaces/login";
 import { questionEndPoint } from "./question.endpoints";
 import { httpService } from "helpers/api-helper";
 
-export const getQuestions = (): any => {
+export const getQuestions = (data: any): any => {
   return httpService
-    .get(`${questionEndPoint.getQuestions}`)
+    .get(`${questionEndPoint.getQuestions}`, { params: data })
     .then((response) => {
       return response;
-    });
+    })
 };
 
 export const updateQuestion = (params: any): any => {
