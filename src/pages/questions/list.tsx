@@ -61,7 +61,7 @@ export const QuestionList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [subjectFilter, setSubjectFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState(generateArrayOfYears()[0]);
+  const [yearFilter, setYearFilter] = useState("");
   const [gradeFilter, setGradeFilter] = useState("");
   const apiUrl = useApiUrl();
 
