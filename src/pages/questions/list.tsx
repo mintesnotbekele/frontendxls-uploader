@@ -85,6 +85,7 @@ export const QuestionList: React.FC = () => {
   useEffect(() => {
     setSubjectFilter(subjectsData?.data[0]?.name);
     setGradeFilter(gradeEnumData?.data?.grades[0]);
+    setYearFilter(generateArrayOfYears()[0]);
   }, [subjectsData, gradeEnumData]);
 
   const getQuestionData = () => {
