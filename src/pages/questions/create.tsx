@@ -28,6 +28,7 @@ import { useForm } from "antd/lib/form/Form";
 import { createQuestion } from "apis/question/question";
 import { openNotification } from "components/feedback/notification";
 import Papa from "papaparse";
+import * as XLSX from 'xlsx';
 import { useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextEditor from "../../components/text-editor";
@@ -219,24 +220,58 @@ export const QuestionCreate: React.FC = () => {
               accept=".csv,.xlsx,.xls"
               showUploadList={false}
               beforeUpload={(file: any) => {
-                Papa.parse(file, {
-                  header: true,
-                  worker: true,
-                  complete: function (results: any) {
-                    const questions = results?.data.map((val: any) => ({
-                      ...val,
-                      question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
-                      A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
-                      B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
-                      C: val?.C?.includes("\>")? val.C : val.C && `<p>${val.C}</p>`,
-                      D: val?.D?.includes("\>")? val.D : val.D && `<p>${val.D}</p>`,
-                      description: val?.description?.includes("\>")? val.description : val.description && `<p>${val.description}</p>`,
-                      metadata: val?.metadata?.includes("\>")? val?.metadata : val.metadata && `<p>${val.metadata}</p>`,
-                    }));
-                    formProps.form.setFieldsValue({ questions });
-                  },
-                });
-
+                if(file.type?.includes('csv')) {
+                  Papa.parse(file, {
+                    header: true,
+                    worker: true,
+                    complete: function (results: any) {
+                      const questions = results?.data.map((val: any) => ({
+                        ...val,
+                        question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
+                        A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
+                        B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
+                        C: val?.C?.includes("\>")? val.C : val.C && `<p>${val.C}</p>`,
+                        D: val?.D?.includes("\>")? val.D : val.D && `<p>${val.D}</p>`,
+                        description: val?.description?.includes("\>")? val.description : val.description && `<p>${val.description}</p>`,
+                        metadata: val?.metadata?.includes("\>")? val?.metadata : val.metadata && `<p>${val.metadata}</p>`,
+                      }));
+                      formProps.form.setFieldsValue({ questions });
+                    },
+                  });
+                } else if(file.type?.includes('spreadsheet')) {
+                  //f = file
+                  var name = file.name;
+                  const reader = new FileReader();
+                  reader.onload = (evt) => { // evt = on_file_select event
+                      // Parse data
+                      const bstr = evt.target?.result;
+                      const wb = XLSX.read(bstr, {type:'binary'});
+                      
+                      // Get first worksheet
+                      const wsname = wb.SheetNames[0];
+                      const ws = wb.Sheets[wsname];
+                      
+                      // Convert sheet to json array
+                      const data = XLSX.utils.sheet_to_json(ws, {});
+                      
+                      // Extract required info from json array
+                      const questions:any = [];
+                      data.forEach((item:any) => {
+                        questions.push({
+                          ...item,
+                          question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
+                          A: item?.A?.toString().includes("\>")? item.A : item.A && `<p>${item.A}</p>`,
+                          B: item?.B?.toString().includes("\>")? item.B : item.B && `<p>${item.B}</p>`,
+                          C: item?.C?.toString().includes("\>")? item.C : item.C && `<p>${item.C}</p>`,
+                          D: item?.D?.toString().includes("\>")? item.D : item.D && `<p>${item.D}</p>`,
+                          description: item?.description?.includes("\>")? item.description : item.description && `<p>${item.description}</p>`,
+                          metadata: item?.metadata?.includes("\>")? item?.metadata : item.metadata && `<p>${item.metadata}</p>`,
+                        });
+                      });
+                      formProps.form.setFieldsValue({ questions });
+                  };
+                  reader.readAsBinaryString(file);
+                }
                 // Prevent upload
                 return false;
               }}
