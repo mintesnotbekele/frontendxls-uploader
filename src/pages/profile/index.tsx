@@ -70,6 +70,7 @@ export const Profile: React.FC = () => {
 
   const submitForm = (formData: any) => {
     setIsLoading(true);
+    formData.gender = profileDetail.gender;
     updateProfile(formData)
       .then((res: any) => {
         openNotification(`Data updated successfully!`, "success");
@@ -115,7 +116,6 @@ export const Profile: React.FC = () => {
     return (
       <Form.Item
         key={name + key}
-        name={name}
         rules={[
           {
             required: true,
@@ -126,7 +126,10 @@ export const Profile: React.FC = () => {
         {defaultValue && items && (
           <Select
             disabled={!isEditing}
-            defaultValue={defaultValue}
+            value={profileDetail?.gender ?? items[0]}
+            onChange={(selected)=>{ 
+              setProfileDetail({...profileDetail, gender: selected});
+            }}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
