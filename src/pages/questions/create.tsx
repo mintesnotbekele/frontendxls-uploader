@@ -32,6 +32,7 @@ import * as XLSX from 'xlsx';
 import { useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextEditor from "../../components/text-editor";
+import { createSubject } from "../../apis/subject/subject.api";
 
 const answerNames = {
   first_option: "A",
@@ -211,6 +212,38 @@ export const QuestionCreate: React.FC = () => {
     );
   };
 
+  const _buildFormSelectionItemForSubjects = ({
+    key,
+    name,
+    items,
+    callback,
+    placeholder,
+  }: any) => {
+    return (
+      <Form.Item
+        key={name + key}
+        name={name}
+        initialValue={items && items[0]?.id}
+        rules={[
+          {
+            required: true,
+            message: validationLabel,
+          },
+        ]}
+      >
+        {items && (
+          <Select
+            inputValue={items[0]?.id}
+            options={items?.map((item: any) => ({
+              label: callback ? callback(item.name) : item.name,
+              value: item.id,
+            }))}
+          />
+        )}
+      </Form.Item>
+    );
+  };
+
   return (
     <>
       <Spin spinning={formLoading}>
@@ -256,7 +289,18 @@ export const QuestionCreate: React.FC = () => {
                       
                       // Extract required info from json array
                       const questions:any = [];
-                      data.forEach((item:any) => {
+                      data.forEach(async (item:any) => {
+                        if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject.toLowerCase()) ) {
+                          // Create the subject because it doesn't exist
+                          const response = await createSubject({name: toSubjectCase(item.subject)});
+                          // console.log('Create subject response: ', response);
+                          item.subject = response?.data?.id;
+                        } else {
+                          item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject.toLowerCase()).id;
+                        }
+
+                        console.log(item);
+
                         questions.push({
                           ...item,
                           question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
@@ -431,12 +475,11 @@ export const QuestionCreate: React.FC = () => {
                       key={"subject"}
                       render={(field) => {
                         const name = [field.name, "subject"];
-                        return _buildFormSelectionItem({
+                        return _buildFormSelectionItemForSubjects({
                           key: field.index,
                           name: name,
                           items:
-                            subjectsData?.data?.map((item: any) => item.name) ??
-                            [],
+                            subjectsData?.data ?? [],
                           placeholder: "Subject",
                         });
                       }}
@@ -498,3 +541,8 @@ export const QuestionCreate: React.FC = () => {
     </>
   );
 };
+
+// Generic string formatter for subject names
+const toSubjectCase = (str: String) => {
+  return (str.substring(0,1).toUpperCase()+str.substring(1).toLowerCase()).trim();
+}
