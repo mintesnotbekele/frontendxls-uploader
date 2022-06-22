@@ -122,6 +122,8 @@ export const QuestionList: React.FC = () => {
       <Spin spinning={isLoadingGradeEnum || isLoadingSubjectsData || isLoading}>
         <div className="flex gap-3">
           <Select
+            allowClear
+            placeholder={'Grade'}
             defaultValue={gradeFilter}
             onChange={(val) => setGradeFilter(val)}
           >
@@ -132,16 +134,20 @@ export const QuestionList: React.FC = () => {
             ))}
           </Select>
           <Select
+            allowClear
+            placeholder={'Subject'}
             defaultValue={subjectFilter}
             onChange={(val) => setSubjectFilter(val)}
           >
             {subjectsData?.data?.map((subject: any) => (
-              <Option value={subject?.name} key={subject?.name}>
+              <Option value={subject?.id} key={subject?.name}>
                 {subject?.name}
               </Option>
             ))}
           </Select>
           <Select
+            allowClear
+            placeholder={'Year'}
             defaultValue={yearFilter}
             onChange={(val) => setYearFilter(val)}
           >
