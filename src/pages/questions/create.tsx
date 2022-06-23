@@ -248,294 +248,297 @@ export const QuestionCreate: React.FC = () => {
     <>
       <Spin spinning={formLoading}>
         <Create saveButtonProps={saveButtonProps}>
-          <div className="flex justify-end my-4">
-            <Upload
-              accept=".csv,.xlsx,.xls"
-              showUploadList={false}
-              beforeUpload={(file: any) => {
-                if(file.type?.includes('csv')) {
-                  Papa.parse(file, {
-                    header: true,
-                    worker: true,
-                    complete: function (results: any) {
-                      const questions = results?.data.map((val: any) => ({
-                        ...val,
-                        question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
-                        A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
-                        B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
-                        C: val?.C?.includes("\>")? val.C : val.C && `<p>${val.C}</p>`,
-                        D: val?.D?.includes("\>")? val.D : val.D && `<p>${val.D}</p>`,
-                        description: val?.description?.includes("\>")? val.description : val.description && `<p>${val.description}</p>`,
-                        metadata: val?.metadata?.includes("\>")? val?.metadata : val.metadata && `<p>${val.metadata}</p>`,
-                      }));
-                      formProps.form.setFieldsValue({ questions });
-                    },
-                  });
-                } else if(file.type?.includes('spreadsheet')) {
-                  //f = file
-                  var name = file.name;
-                  const reader = new FileReader();
-                  reader.onload = (evt) => { // evt = on_file_select event
-                      // Parse data
-                      const bstr = evt.target?.result;
-                      const wb = XLSX.read(bstr, {type:'binary'});
-                      
-                      // Get first worksheet
-                      const wsname = wb.SheetNames[0];
-                      const ws = wb.Sheets[wsname];
-                      
-                      // Convert sheet to json array
-                      const data = XLSX.utils.sheet_to_json(ws, {});
-                      
-                      // Extract required info from json array
-                      const questions:any = [];
-                      data.forEach(async (item:any) => {
-                        if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject.toLowerCase()) ) {
-                          // Create the subject because it doesn't exist
-                          const response = await createSubject({name: toSubjectCase(item.subject)});
-                          // console.log('Create subject response: ', response);
-                          item.subject = response?.data?.id;
-                        } else {
-                          item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject.toLowerCase()).id;
-                        }
+          <div className={'inline-grid'}>
+            <div className="w-full flex justify-end my-4">
+              <Upload
+                accept=".csv,.xlsx,.xls"
+                showUploadList={false}
+                beforeUpload={(file: any) => {
+                  if(file.type?.includes('csv')) {
+                    Papa.parse(file, {
+                      header: true,
+                      worker: true,
+                      complete: function (results: any) {
+                        const questions = results?.data.map((val: any) => ({
+                          ...val,
+                          question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
+                          A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
+                          B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
+                          C: val?.C?.includes("\>")? val.C : val.C && `<p>${val.C}</p>`,
+                          D: val?.D?.includes("\>")? val.D : val.D && `<p>${val.D}</p>`,
+                          description: val?.description?.includes("\>")? val.description : val.description && `<p>${val.description}</p>`,
+                          metadata: val?.metadata?.includes("\>")? val?.metadata : val.metadata && `<p>${val.metadata}</p>`,
+                        }));
+                        formProps.form.setFieldsValue({ questions });
+                      },
+                    });
+                  } else if(file.type?.includes('spreadsheet')) {
+                    //f = file
+                    var name = file.name;
+                    const reader = new FileReader();
+                    reader.onload = (evt) => { // evt = on_file_select event
+                        // Parse data
+                        const bstr = evt.target?.result;
+                        const wb = XLSX.read(bstr, {type:'binary'});
+                        
+                        // Get first worksheet
+                        const wsname = wb.SheetNames[0];
+                        const ws = wb.Sheets[wsname];
+                        
+                        // Convert sheet to json array
+                        const data = XLSX.utils.sheet_to_json(ws, {});
+                        
+                        // Extract required info from json array
+                        const questions:any = [];
+                        data.forEach(async (item:any) => {
+                          if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject.toLowerCase()) ) {
+                            // Create the subject because it doesn't exist
+                            const response = await createSubject({name: toSubjectCase(item.subject)});
+                            // console.log('Create subject response: ', response);
+                            item.subject = response?.data?.id;
+                          } else {
+                            item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject.toLowerCase()).id;
+                          }
 
-                        console.log(item);
+                          console.log(item);
 
-                        questions.push({
-                          ...item,
-                          question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
-                          A: item?.A?.toString().includes("\>")? item.A : item.A && `<p>${item.A}</p>`,
-                          B: item?.B?.toString().includes("\>")? item.B : item.B && `<p>${item.B}</p>`,
-                          C: item?.C?.toString().includes("\>")? item.C : item.C && `<p>${item.C}</p>`,
-                          D: item?.D?.toString().includes("\>")? item.D : item.D && `<p>${item.D}</p>`,
-                          description: item?.description?.includes("\>")? item.description : item.description && `<p>${item.description}</p>`,
-                          metadata: item?.metadata?.includes("\>")? item?.metadata : item.metadata && `<p>${item.metadata}</p>`,
+                          questions.push({
+                            ...item,
+                            question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
+                            A: item?.A?.toString().includes("\>")? item.A : item.A && `<p>${item.A}</p>`,
+                            B: item?.B?.toString().includes("\>")? item.B : item.B && `<p>${item.B}</p>`,
+                            C: item?.C?.toString().includes("\>")? item.C : item.C && `<p>${item.C}</p>`,
+                            D: item?.D?.toString().includes("\>")? item.D : item.D && `<p>${item.D}</p>`,
+                            description: item?.description?.includes("\>")? item.description : item.description && `<p>${item.description}</p>`,
+                            metadata: item?.metadata?.includes("\>")? item?.metadata : item.metadata && `<p>${item.metadata}</p>`,
+                          });
                         });
-                      });
-                      formProps.form.setFieldsValue({ questions });
-                  };
-                  reader.readAsBinaryString(file);
-                }
-                // Prevent upload
-                return false;
+                        formProps.form.setFieldsValue({ questions });
+                    };
+                    reader.readAsBinaryString(file);
+                  }
+                  // Prevent upload
+                  return false;
+                }}
+              >
+                <Button>
+                  <Icon type="upload" /> Click to Upload
+                </Button>
+              </Upload>
+            </div>
+            <Form
+              className="w-full overflow-auto"
+              layout="vertical"
+              {...formProps}
+              name="form"
+              initialValues={{
+                questions: [
+                  {
+                    question: "",
+                    A: "",
+                    B: "",
+                    C: "",
+                    D: "",
+                  },
+                ],
               }}
+              onFinish={submitForm}
             >
-              <Button>
-                <Icon type="upload" /> Click to Upload
-              </Button>
-            </Upload>
+              <Form.List name="questions">
+                {(fields, { add, remove }) => {
+                  return (
+                    <Table
+                      dataSource={fields}
+                      loading={isLoading}
+                      rowKey="id"
+                      scroll={{ x: "4000px" }}
+                      key="questions"
+                    >
+                      <Table.Column
+                        title="Meta Data"
+                        key={"metadata"}
+                        render={(field) => {
+                          const name = [field.name, "metadata"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Meta Data",
+                            false
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="Question"
+                        key={"question"}
+                        render={(field) => {
+                          const name = [field.name, "question"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Question"
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="First option"
+                        key={"A"}
+                        render={(field) => {
+                          const name = [field.name, "A"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "First Option"
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="Second option"
+                        key={"B"}
+                        render={(field) => {
+                          const name = [field.name, "B"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Second Option"
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="Third option"
+                        key={"C"}
+                        render={(field) => {
+                          const name = [field.name, "C"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Third Option"
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="Fourth option"
+                        key={"D"}
+                        render={(field) => {
+                          const name = [field.name, "D"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Fourth Option"
+                          );
+                        }}
+                      />
+
+                      <Table.Column
+                        title="Answer"
+                        key={"answer"}
+                        render={(field) => {
+                          const name = [field.name, "answer"];
+                          return _buildFormSelectionItem({
+                            key: field.index,
+                            name: name,
+                            items: answerEnumData?.data?.answers,
+                            placeholder: "Answer",
+                            callback: getAnswersLabel,
+                          });
+                        }}
+                      />
+
+                      <Table.Column
+                        title="Description"
+                        key={"description"}
+                        render={(field) => {
+                          const name = [field.name, "description"];
+                          return _buildFormTextEditor(
+                            field.index,
+                            name,
+                            "Description",
+                            false
+                          );
+                        }}
+                      />
+
+                      <Table.Column
+                        title="Grade"
+                        key={"grade"}
+                        render={(field) => {
+                          const name = [field.name, "grade"];
+                          return _buildFormSelectionItem({
+                            key: field.index,
+                            name: name,
+                            items: gradeEnumData?.data?.grades,
+                            placeholder: "Grade",
+                            callback: getGradeLabel,
+                          });
+                        }}
+                      />
+
+                      <Table.Column
+                        title="Subject"
+                        key={"subject"}
+                        render={(field) => {
+                          const name = [field.name, "subject"];
+                          return _buildFormSelectionItemForSubjects({
+                            key: field.index,
+                            name: name,
+                            items:
+                              subjectsData?.data ?? [],
+                            placeholder: "Subject",
+                          });
+                        }}
+                      />
+                      <Table.Column
+                        title="Year"
+                        key={"year"}
+                        render={(field) => {
+                          const name = [field.name, "year"];
+                          return _buildFormInputItem(
+                            field.index,
+                            name,
+                            "Year",
+                            "number"
+                          );
+                        }}
+                      />
+
+                      <Table.Column
+                        key={"action"}
+                        title={
+                          <div className="flex gap-2 justify-center">
+                            <span className="m-auto">Action</span>
+                            <Button
+                              onClick={() => {
+                                add();
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                        }
+                        render={(field: any) => {
+                          return (
+                            <Form.Item>
+                              <div className="flex gap-2 flex-row">
+                                {fields?.length > 1 ? (
+                                  <Button
+                                    danger
+                                    onClick={() => {
+                                      remove(field.key);
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </Form.Item>
+                          );
+                        }}
+                      />
+                    </Table>
+                  );
+                }}
+              </Form.List>
+            </Form>
           </div>
-          <Form
-            layout="vertical"
-            {...formProps}
-            name="form"
-            initialValues={{
-              questions: [
-                {
-                  question: "",
-                  A: "",
-                  B: "",
-                  C: "",
-                  D: "",
-                },
-              ],
-            }}
-            onFinish={submitForm}
-          >
-            <Form.List name="questions">
-              {(fields, { add, remove }) => {
-                return (
-                  <Table
-                    dataSource={fields}
-                    loading={isLoading}
-                    rowKey="id"
-                    scroll={{ x: "4000px" }}
-                    key="questions"
-                  >
-                    <Table.Column
-                      title="Meta Data"
-                      key={"metadata"}
-                      render={(field) => {
-                        const name = [field.name, "metadata"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Meta Data",
-                          false
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      title="Question"
-                      key={"question"}
-                      render={(field) => {
-                        const name = [field.name, "question"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Question"
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      title="First option"
-                      key={"A"}
-                      render={(field) => {
-                        const name = [field.name, "A"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "First Option"
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      title="Second option"
-                      key={"B"}
-                      render={(field) => {
-                        const name = [field.name, "B"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Second Option"
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      title="Third option"
-                      key={"C"}
-                      render={(field) => {
-                        const name = [field.name, "C"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Third Option"
-                        );
-                      }}
-                    />
-                    <Table.Column
-                      title="Fourth option"
-                      key={"D"}
-                      render={(field) => {
-                        const name = [field.name, "D"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Fourth Option"
-                        );
-                      }}
-                    />
-
-                    <Table.Column
-                      title="Answer"
-                      key={"answer"}
-                      render={(field) => {
-                        const name = [field.name, "answer"];
-                        return _buildFormSelectionItem({
-                          key: field.index,
-                          name: name,
-                          items: answerEnumData?.data?.answers,
-                          placeholder: "Answer",
-                          callback: getAnswersLabel,
-                        });
-                      }}
-                    />
-
-                    <Table.Column
-                      title="Description"
-                      key={"description"}
-                      render={(field) => {
-                        const name = [field.name, "description"];
-                        return _buildFormTextEditor(
-                          field.index,
-                          name,
-                          "Description",
-                          false
-                        );
-                      }}
-                    />
-
-                    <Table.Column
-                      title="Grade"
-                      key={"grade"}
-                      render={(field) => {
-                        const name = [field.name, "grade"];
-                        return _buildFormSelectionItem({
-                          key: field.index,
-                          name: name,
-                          items: gradeEnumData?.data?.grades,
-                          placeholder: "Grade",
-                          callback: getGradeLabel,
-                        });
-                      }}
-                    />
-
-                    <Table.Column
-                      title="Subject"
-                      key={"subject"}
-                      render={(field) => {
-                        const name = [field.name, "subject"];
-                        return _buildFormSelectionItemForSubjects({
-                          key: field.index,
-                          name: name,
-                          items:
-                            subjectsData?.data ?? [],
-                          placeholder: "Subject",
-                        });
-                      }}
-                    />
-                    <Table.Column
-                      title="Year"
-                      key={"year"}
-                      render={(field) => {
-                        const name = [field.name, "year"];
-                        return _buildFormInputItem(
-                          field.index,
-                          name,
-                          "Year",
-                          "number"
-                        );
-                      }}
-                    />
-
-                    <Table.Column
-                      key={"action"}
-                      title={
-                        <div className="flex gap-2 justify-center">
-                          <span className="m-auto">Action</span>
-                          <Button
-                            onClick={() => {
-                              add();
-                            }}
-                          >
-                            Add
-                          </Button>
-                        </div>
-                      }
-                      render={(field: any) => {
-                        return (
-                          <Form.Item>
-                            <div className="flex gap-2 flex-row">
-                              {fields?.length > 1 ? (
-                                <Button
-                                  danger
-                                  onClick={() => {
-                                    remove(field.key);
-                                  }}
-                                >
-                                  Remove
-                                </Button>
-                              ) : null}
-                            </div>
-                          </Form.Item>
-                        );
-                      }}
-                    />
-                  </Table>
-                );
-              }}
-            </Form.List>
-          </Form>
         </Create>
       </Spin>
     </>

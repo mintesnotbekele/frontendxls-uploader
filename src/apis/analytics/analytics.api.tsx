@@ -10,3 +10,11 @@ export const getAnalytics = (): any => {
       return response;
     });
 };
+
+export const getCounts = (): any => {
+  return httpService
+    .get(`${analyticsEndPoint.getCounts}`)
+    .then((response) => {
+      return response;
+    });
+};

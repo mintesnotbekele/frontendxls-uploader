@@ -83,16 +83,20 @@ const App: React.FC = () => {
       Layout={({ children, Footer, OffLayoutArea }) => (
         <AntdLayout>
           <AntdLayout>
-            <CustomSider />
+            <div className={"flex h-screen w-screen overflow-hidden"}>
+              <CustomSider />
 
-            <AntdLayout.Content style={{minHeight: '100vh'}}>
-              <CustomHeader />
-              <AntdLayout.Content className="p-3">
-                {children}
-              </AntdLayout.Content>
-              <Footer />
-            </AntdLayout.Content>
-            <OffLayoutArea />
+              <div className="h-full w-full">
+                <AntdLayout.Content style={{minHeight: '100vh'}} className={"flex flex-col h-screen w-full overflow-hidden bg-white"}>
+                  <CustomHeader />
+                  <AntdLayout.Content className="p-3 pt-7 h-full w-full overflow-auto p-4 px-10">
+                    {children}
+                  </AntdLayout.Content>
+                  <Footer />
+                </AntdLayout.Content>
+                <OffLayoutArea />
+              </div>
+            </div>
           </AntdLayout>
         </AntdLayout>
       )}

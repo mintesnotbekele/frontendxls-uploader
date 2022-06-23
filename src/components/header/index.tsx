@@ -38,7 +38,7 @@ export const CustomHeader: React.FC = () => {
   );
   return (
     <>
-      <div>
+      <div className="shadow-sm">
         <span className="items p-2">
           <h2 className="mt-auto mx-5">{identity?.name}</h2>
           <Dropdown overlay={menu}>

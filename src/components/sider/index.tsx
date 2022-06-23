@@ -23,21 +23,31 @@ export const CustomSider: React.FC = () => {
     <AntdLayout.Sider
       collapsible
       theme="light"
+      width={'clamp(250px, 100%,12.5vw)'}
       collapsedWidth={isMobile ? 0 : 80}
       collapsed={collapsed}
       breakpoint="lg"
       onCollapse={(collapsed: boolean): void => setCollapsed(collapsed)}
-      style={isMobile ? antLayoutSiderMobile : antLayoutSider}
+      style={{...(isMobile ? antLayoutSiderMobile : antLayoutSider), background:'#0000'}}
     >
+      <style>
+        {`
+          .ant-layout-sider-trigger {
+            background: #0000 !important;
+          }
+        `}
+      </style>
       <Title collapsed={collapsed} />
       <Menu
         selectedKeys={[selectedKey]}
+        style={{
+          backgroundColor: '#0000'
+        }}
         mode="inline"
         onClick={({ key }) => {
           if (!breakpoint.lg) {
             setCollapsed(true);
           }
-
           push(key as string);
         }}
       >
@@ -46,7 +56,8 @@ export const CustomSider: React.FC = () => {
           return (
             <Menu.Item
               style={{
-                fontWeight: isSelected ? "bold" : "normal"
+                fontWeight: isSelected ? "bold" : "normal",
+                backgroundColor: '#0000'
               }}
               key={route}
               icon={icon}

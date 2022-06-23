@@ -171,14 +171,13 @@ export const QuestionList: React.FC = () => {
 
   return (
     <>
-      <Row>
-        <Col span={24}>
+      <div className="inline-grid">
           <Card title="Filters">
             <Filter />
           </Card>
-        </Col>
-        <Col span={24}>
-          <List canCreate>
+          <List canCreate pageHeaderProps={{
+            className: 'w-full overflow-auto',
+          }}>
             <Table
               dataSource={questions}
               loading={isLoading}
@@ -311,8 +310,7 @@ export const QuestionList: React.FC = () => {
               />
             </Table>
           </List>
-        </Col>
-      </Row>
+      </div>
     </>
   );
 };
