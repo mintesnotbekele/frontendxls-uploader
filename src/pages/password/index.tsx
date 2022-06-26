@@ -61,7 +61,7 @@ export const ChangePassword: React.FC = () => {
       <Spin spinning={isLoading}>
         <Row>
           <Col span={24}>
-            <Card className="md:w-1/2" style={{ margin: "auto" }}>
+            <Card className="md:w-1/2 shadow-sm border-0" style={{ margin: "auto", borderRadius:'1.25em' }}>
               {security && (
                 <Form layout="vertical" name="form" onFinish={changePassword}>
                   {_buildFormInputItem(

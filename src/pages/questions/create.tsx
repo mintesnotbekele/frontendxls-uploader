@@ -291,13 +291,13 @@ export const QuestionCreate: React.FC = () => {
                         // Extract required info from json array
                         const questions:any = [];
                         data.forEach(async (item:any) => {
-                          if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject.toLowerCase()) ) {
+                          if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject?.toLowerCase()) ) {
                             // Create the subject because it doesn't exist
                             const response = await createSubject({name: toSubjectCase(item.subject)});
                             // console.log('Create subject response: ', response);
                             item.subject = response?.data?.id;
                           } else {
-                            item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject.toLowerCase()).id;
+                            item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject?.toLowerCase())?.id;
                           }
 
                           console.log(item);

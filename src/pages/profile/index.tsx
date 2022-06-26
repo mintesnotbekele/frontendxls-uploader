@@ -145,8 +145,8 @@ export const Profile: React.FC = () => {
       <Spin spinning={isLoading}>
         <Row>
           <Col span={24}>
-            <Card className="md:w-1/2" style={{ margin: "auto" }}>
-              <div className="flex justify-between">
+            <Card className="md:w-1/2 shadow-sm border-0" style={{ margin: "auto", borderRadius:'1.25em' }}>
+              <div className="flex justify-between rounded-xl overflow-hidden">
                 <div className="mb-4">
                   <Upload
                     {...{

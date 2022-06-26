@@ -83,10 +83,10 @@ const App: React.FC = () => {
       Layout={({ children, Footer, OffLayoutArea }) => (
         <AntdLayout>
           <AntdLayout>
-            <div className={"flex h-screen w-screen overflow-hidden"}>
+            <div className={"flex h-screen w-screen overflow-hidden bg-gray-200"}>
               <CustomSider />
 
-              <div className="h-full w-full">
+              <div className="h-full w-full overflow-hidden" style={{borderTopLeftRadius: '1.5em', borderBottomLeftRadius: '1.5em'}}>
                 <AntdLayout.Content style={{minHeight: '100vh'}} className={"flex flex-col h-screen w-full overflow-hidden bg-white"}>
                   <CustomHeader />
                   <AntdLayout.Content className="p-3 pt-7 h-full w-full overflow-auto p-4 px-10">
@@ -103,7 +103,7 @@ const App: React.FC = () => {
       Title={() => (
         <Link to="/" style={{ margin: "auto", marginRight: "10px" }}>
           <img
-            className="m-auto my-4"
+            className="m-auto my-4 md:mt-16"
             src="/logo.svg"
             alt="Mk"
             style={{ width: "100px" }}
