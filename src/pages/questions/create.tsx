@@ -76,6 +76,7 @@ const getGradeLabel = (option: string) => {
 };
 const initFormData = {
   grade: "grade_8",
+  number: "",
   question: "",
   A: "",
   B: "",
@@ -142,6 +143,7 @@ export const QuestionCreate: React.FC = () => {
         labelCol={{ offset: 0 }}
         key={name + key}
         name={name}
+        required={['number'].includes(name)}
         rules={[
           {
             required: true,
@@ -261,6 +263,7 @@ export const QuestionCreate: React.FC = () => {
                       complete: function (results: any) {
                         const questions = results?.data.map((val: any) => ({
                           ...val,
+                          number: val?.number,
                           question: val?.question?.includes("\>")? val.question : val.question && `<p>${val.question}</p>`,
                           A: val?.A?.includes("\>")? val.A : val.A && `<p>${val.A}</p>`,
                           B: val?.B?.includes("\>")? val.B : val.B && `<p>${val.B}</p>`,
@@ -304,6 +307,7 @@ export const QuestionCreate: React.FC = () => {
 
                           questions.push({
                             ...item,
+                            number: item?.number,
                             question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
                             A: item?.A?.toString().includes("\>")? item.A : item.A && `<p>${item.A}</p>`,
                             B: item?.B?.toString().includes("\>")? item.B : item.B && `<p>${item.B}</p>`,
@@ -334,6 +338,7 @@ export const QuestionCreate: React.FC = () => {
               initialValues={{
                 questions: [
                   {
+                    number: "",
                     question: "",
                     A: "",
                     B: "",
@@ -364,6 +369,18 @@ export const QuestionCreate: React.FC = () => {
                             name,
                             "Meta Data",
                             false
+                          );
+                        }}
+                      />
+                      <Table.Column
+                        title="Number"
+                        key={"number"}
+                        render={(field) => {
+                          const name = [field.name, "number"];
+                          return _buildFormInputItem(
+                            field.index,
+                            name,
+                            "number"
                           );
                         }}
                       />

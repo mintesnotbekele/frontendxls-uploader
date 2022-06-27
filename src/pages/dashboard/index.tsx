@@ -127,11 +127,11 @@ export const Dashboard: React.FC = () => {
             <div className="grid grid-flow-row p-7 m-auto">
               <p className="col-span-2 row-span-2 font-bold text-3xl text-gray-400 text-center"> Temariye </p>
               {counts && Object.entries(counts).map((item:any, idx:number) => 
-                <div className="inline-flex m-3 p-3 cursor-default pr-16 items-center shadow counter-card rounded-2xl overflow-hidden relative scale-25" style={{minWidth: '175px'}}>
+                <div className="inline-flex m-3 my-4 p-3 cursor-default pr-16 items-center shadow-xl counter-card rounded-2xl overflow-hidden relative scale-25" style={{minWidth: '175px'}}>
                   <span className="mx-4" style={{position: 'absolute', bottom: [0,3].includes(idx) ? '.5em':'2.85em', right: '-.15em', transform: [0,3].includes(idx) ? 'rotate(7deg)':'rotate(-5deg)' }}> {icons[item[0]]} </span>
                   <div className="m-3 flex flex-col justify-center text-gray-200">
-                    <div className="text-left font-bold text-2xl"> {item[1]} </div>
-                    <div className="text-left font-bold text-lg"> {item[0].substring(0,1).toUpperCase() + item[0].substring(1).toLowerCase()} </div>
+                    <div className="text-left font-bold text-xl"> {item[1]} </div>
+                    <div className="text-left font-bold"> {item[0].substring(0,1).toUpperCase() + item[0].substring(1).toLowerCase()} </div>
                   </div>
                 </div>
               )}

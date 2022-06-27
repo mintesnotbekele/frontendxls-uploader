@@ -28,7 +28,7 @@ export default function RadarChart({ title, data, labels }: any) {
         label: title,
         data: data,
         borderWidth: 1,
-        backgroundColor: "#8BB7A2",
+        backgroundColor: "#8BB7A277",
         borderColor: "#8BB7A2",
       },
     ],

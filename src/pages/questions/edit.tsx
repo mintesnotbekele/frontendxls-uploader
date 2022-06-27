@@ -75,6 +75,7 @@ const getGradeLabel = (option: string) => {
 };
 const initFormData = {
   grade: "grade_8",
+  number: "",
   question: "",
   A: "",
   B: "",
@@ -222,6 +223,7 @@ export const QuestionEdit: React.FC = () => {
                   {...formProps}
                   name="form"
                   initialValues={{
+                    number: "",
                     question: "",
                     A: "",
                     B: "",
@@ -238,6 +240,9 @@ export const QuestionEdit: React.FC = () => {
                         "Meta Data",
                         false
                       )}
+                    </Col>
+                    <Col span={12}>
+                      {_buildFormTextEditor("2", "number", "Number")}
                     </Col>
                     <Col span={12}>
                       {_buildFormTextEditor("2", "question", "Question")}

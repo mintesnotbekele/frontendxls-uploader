@@ -199,6 +199,20 @@ export const QuestionList: React.FC = () => {
                 }}
               />
               <Table.Column
+                dataIndex="number"
+                title="Number"
+                render={(data) => {
+                  return (
+                    <div
+                      style={{ maxWidth: "300px" }}
+                      dangerouslySetInnerHTML={{
+                        __html: data,
+                      }}
+                    ></div>
+                  );
+                }}
+              />
+              <Table.Column
                 dataIndex="question"
                 title="Question"
                 render={(data) => {
