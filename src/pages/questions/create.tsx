@@ -323,34 +323,38 @@ export const QuestionCreate: React.FC = () => {
                         tmp.innerHTML = htmlData;
                         let colIDs:any = {};
                         tmp.querySelectorAll('td').forEach((td:any) => {
-                          if (td?.innerText.includes('question')) {
+                          let fieldName = td?.innerText.toString().toLowerCase();
+                          if (fieldName.includes('number')) {
+                            if(!colIDs['number'])
+                              colIDs['number'] = td.id.substring(0, (td.id.length-1))
+                          } else if (fieldName.includes('question')) {
                             if(!colIDs['question'])
                               colIDs['question'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('A')) {
+                          } else if (fieldName.includes('A')) {
                             if(!colIDs['A'])
                               colIDs['A'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('B')) {
+                          } else if (fieldName.includes('B')) {
                             if(!colIDs['B'])
                               colIDs['B'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('C')) {
+                          } else if (fieldName.includes('C')) {
                             if(!colIDs['C'])
                               colIDs['C'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('D')) {
+                          } else if (fieldName.includes('D')) {
                             if(!colIDs['D'])
                               colIDs['D'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('description')) {
+                          } else if (fieldName.includes('description')) {
                             if(!colIDs['description'])
                               colIDs['description'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('metadata')) {
+                          } else if (fieldName.includes('metadata')) {
                             if(!colIDs['metadata'])
                               colIDs['metadata'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('answer')) {
+                          } else if (fieldName.includes('answer')) {
                             if(!colIDs['answer'])
                               colIDs['answer'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('subject')) {
+                          } else if (fieldName.includes('subject')) {
                             if(!colIDs['subject'])
                               colIDs['subject'] = td.id.substring(0, (td.id.length-1))
-                          } else if (td?.innerText.includes('year')) {
+                          } else if (fieldName.includes('year')) {
                             if(!colIDs['year'])
                               colIDs['year'] = td.id.substring(0, (td.id.length-1))
                           }
