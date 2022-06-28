@@ -6,6 +6,7 @@ const TextEditor = ({ placeholder, onChange, value = "" }) => {
     toolbar: [
       [{ header: [1, 2, false] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
       [
         { list: "ordered" },
         { list: "bullet" },
@@ -29,6 +30,7 @@ const TextEditor = ({ placeholder, onChange, value = "" }) => {
     "indent",
     "link",
     "image",
+    "script",
   ];
 
   return (

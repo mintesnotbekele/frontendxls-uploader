@@ -132,6 +132,26 @@ export const QuestionCreate: React.FC = () => {
       .finally(() => setFormLoading(false));
   };
 
+  const extractTDContent = (str:string, prefix:string, suffix:string) => {
+    let matchRegex = `${prefix}(.*?)${suffix}`;
+    let regex = new RegExp(matchRegex);
+
+    let matches = str.match(regex);
+    if(matches?.length)
+      return matches[0].substring(prefix.length, matches[0].length-suffix.length);
+    
+    return '';
+
+    // return str.match(regex)[0]?.substring(
+    //   'sjs-C2">'.length,
+    //   x.match(/sjs-C2">(.*?)<\/td>/)[0].length - '</td>'.length
+    // ) 
+    // return x.match(/sjs-C2">(.*?)<\/td>/)[0]?.substring(
+    //   'sjs-C2">'.length,
+    //   x.match(/sjs-C2">(.*?)<\/td>/)[0].length - '</td>'.length
+    // ) 
+  }
+
   const _buildFormInputItem = (
     key: string,
     name: any,
@@ -175,7 +195,7 @@ export const QuestionCreate: React.FC = () => {
       >
         <TextEditor
           placeholder={placeholder}
-          onChange={(val: any) => console.log(val)}
+          onChange={(val: any) => null}
           value = {formProps.form.getFieldValue(name)}
         />
       </Form.Item>
@@ -287,35 +307,81 @@ export const QuestionCreate: React.FC = () => {
                         // Get first worksheet
                         const wsname = wb.SheetNames[0];
                         const ws = wb.Sheets[wsname];
-                        
-                        // Convert sheet to json array
-                        const data = XLSX.utils.sheet_to_json(ws, {});
-                        
-                        // Extract required info from json array
-                        const questions:any = [];
-                        data.forEach(async (item:any) => {
-                          if(item.subject && !subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(item.subject?.toLowerCase()) ) {
-                            // Create the subject because it doesn't exist
-                            const response = await createSubject({name: toSubjectCase(item.subject)});
-                            // console.log('Create subject response: ', response);
-                            item.subject = response?.data?.id;
-                          } else {
-                            item.subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == item.subject?.toLowerCase())?.id;
+
+                        // Convert sheet to html
+                        const htmlData = XLSX.utils.sheet_to_html(ws, {});                        
+
+                        /** NARRATION:
+                         * - Parse the html data
+                         * - Get col id prefixes form header row items
+                         * - Store the prefixes on a map : colIDs
+                         * - Loop over rows
+                         * - add questions to list based on id-keys
+                         */
+
+                        const tmp = document.createElement('html');
+                        tmp.innerHTML = htmlData;
+                        let colIDs:any = {};
+                        tmp.querySelectorAll('td').forEach((td:any) => {
+                          if (td?.innerText.includes('question')) {
+                            if(!colIDs['question'])
+                              colIDs['question'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('A')) {
+                            if(!colIDs['A'])
+                              colIDs['A'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('B')) {
+                            if(!colIDs['B'])
+                              colIDs['B'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('C')) {
+                            if(!colIDs['C'])
+                              colIDs['C'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('D')) {
+                            if(!colIDs['D'])
+                              colIDs['D'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('description')) {
+                            if(!colIDs['description'])
+                              colIDs['description'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('metadata')) {
+                            if(!colIDs['metadata'])
+                              colIDs['metadata'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('answer')) {
+                            if(!colIDs['answer'])
+                              colIDs['answer'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('subject')) {
+                            if(!colIDs['subject'])
+                              colIDs['subject'] = td.id.substring(0, (td.id.length-1))
+                          } else if (td?.innerText.includes('year')) {
+                            if(!colIDs['year'])
+                              colIDs['year'] = td.id.substring(0, (td.id.length-1))
                           }
+                        });
 
-                          console.log(item);
+                        const questions:any = [];
+                        let _tempSubjects:any = subjectsData;
+                        tmp.querySelectorAll('tr').forEach(async (row:any, idx:number) => {
+                          if(idx == 0)
+                            return;
+                          else if(!row.querySelector(`#${colIDs['question']+(idx+1)}`)?.innerText.trim().length)
+                            return;
 
-                          questions.push({
-                            ...item,
-                            number: item?.number,
-                            question: item?.question?.includes("\>")? item.question : item.question && `<p>${item.question}</p>`,
-                            A: item?.A?.toString().includes("\>")? item.A : item.A && `<p>${item.A}</p>`,
-                            B: item?.B?.toString().includes("\>")? item.B : item.B && `<p>${item.B}</p>`,
-                            C: item?.C?.toString().includes("\>")? item.C : item.C && `<p>${item.C}</p>`,
-                            D: item?.D?.toString().includes("\>")? item.D : item.D && `<p>${item.D}</p>`,
-                            description: item?.description?.includes("\>")? item.description : item.description && `<p>${item.description}</p>`,
-                            metadata: item?.metadata?.includes("\>")? item?.metadata : item.metadata && `<p>${item.metadata}</p>`,
+                          // Get subject and check/create it if its new
+                          let subject = row.querySelector(`#${colIDs['subject']+(idx+1)}`)?.innerText.trim();
+                          if(subject && !_tempSubjects?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(subject?.toLowerCase()) ) {
+                            // Create the subject because it doesn't exist
+                            const response = await createSubject({name: toSubjectCase(subject)});
+                            subject = response?.data?.id;
+                            _tempSubjects.push(response?.data);
+                          } else {
+                            subject = _tempSubjects?.data?.find((x:any) => x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
+                          }                     
+
+                          let question:any = {};
+                          Object.keys(colIDs).forEach((key:string)=>{
+                            question[key] = row.querySelector(`#${colIDs[key]+(idx+1)}`)?.innerHTML;
                           });
+                          question['subject'] = subject;
+
+                          questions.push(question);
                         });
                         formProps.form.setFieldsValue({ questions });
                     };
