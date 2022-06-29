@@ -323,38 +323,38 @@ export const QuestionCreate: React.FC = () => {
                         tmp.innerHTML = htmlData;
                         let colIDs:any = {};
                         tmp.querySelectorAll('td').forEach((td:any) => {
-                          let fieldName = td?.innerText.toString().toLowerCase();
-                          if (fieldName.includes('number')) {
+                          let fieldName = td?.innerText.toString().trim();
+                          if (fieldName == 'number') {
                             if(!colIDs['number'])
                               colIDs['number'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('question')) {
+                          } else if (fieldName == 'question') {
                             if(!colIDs['question'])
                               colIDs['question'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('A')) {
+                          } else if (fieldName == 'A') {
                             if(!colIDs['A'])
                               colIDs['A'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('B')) {
+                          } else if (fieldName == 'B') {
                             if(!colIDs['B'])
                               colIDs['B'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('C')) {
+                          } else if (fieldName == 'C') {
                             if(!colIDs['C'])
                               colIDs['C'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('D')) {
+                          } else if (fieldName == 'D') {
                             if(!colIDs['D'])
                               colIDs['D'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('description')) {
+                          } else if (fieldName == 'description') {
                             if(!colIDs['description'])
                               colIDs['description'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('metadata')) {
+                          } else if (fieldName == 'metadata') {
                             if(!colIDs['metadata'])
                               colIDs['metadata'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('answer')) {
+                          } else if (fieldName == 'answer') {
                             if(!colIDs['answer'])
                               colIDs['answer'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('subject')) {
+                          } else if (fieldName == 'subject') {
                             if(!colIDs['subject'])
                               colIDs['subject'] = td.id.substring(0, (td.id.length-1))
-                          } else if (fieldName.includes('year')) {
+                          } else if (fieldName == 'year') {
                             if(!colIDs['year'])
                               colIDs['year'] = td.id.substring(0, (td.id.length-1))
                           }
@@ -374,7 +374,7 @@ export const QuestionCreate: React.FC = () => {
                             // Create the subject because it doesn't exist
                             const response = await createSubject({name: toSubjectCase(subject)});
                             subject = response?.data?.id;
-                            _tempSubjects.push(response?.data);
+                            _tempSubjects.data.push(response?.data);
                           } else {
                             subject = _tempSubjects?.data?.find((x:any) => x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
                           }                     
