@@ -296,8 +296,7 @@ export const QuestionCreate: React.FC = () => {
                       },
                     });
                   } else if(file.type?.includes('spreadsheet')) {
-                    //f = file
-                    var name = file.name;
+                    setFormLoading(true);
                     const reader = new FileReader();
                     reader.onload = (evt) => { // evt = on_file_select event
                         // Parse data
@@ -322,7 +321,7 @@ export const QuestionCreate: React.FC = () => {
                         const tmp = document.createElement('html');
                         tmp.innerHTML = htmlData;
                         let colIDs:any = {};
-                        tmp.querySelectorAll('td').forEach((td:any) => {
+                        tmp.querySelector('tr')?.querySelectorAll('td').forEach((td:any) => {
                           let fieldName = td?.innerText.toString().trim();
                           if (fieldName == 'number') {
                             if(!colIDs['number'])
@@ -361,7 +360,9 @@ export const QuestionCreate: React.FC = () => {
                         });
 
                         const questions:any = [];
-                        let _tempSubjects:any = subjectsData;
+                        let existingSubjects = subjectsData?.data?.map((x:any) => x.name?.toString().toLowerCase());
+                        let createList:any = [];
+                        // let newSubject 
                         tmp.querySelectorAll('tr').forEach(async (row:any, idx:number) => {
                           if(idx == 0)
                             return;
@@ -370,24 +371,50 @@ export const QuestionCreate: React.FC = () => {
 
                           // Get subject and check/create it if its new
                           let subject = row.querySelector(`#${colIDs['subject']+(idx+1)}`)?.innerText.trim();
-                          if(subject && !_tempSubjects?.data?.map((x:any) => x.name?.toString().toLowerCase()).includes(subject?.toLowerCase()) ) {
-                            // Create the subject because it doesn't exist
-                            const response = await createSubject({name: toSubjectCase(subject)});
-                            subject = response?.data?.id;
-                            _tempSubjects.data.push(response?.data);
+
+                          if(subject.length && !existingSubjects.includes(subject?.toLowerCase()) && !createList.includes(toSubjectCase(subject)) ) {
+                            // Add subject to create list
+                            createList.push(toSubjectCase(subject));
+                          } else if(subject.length) {
+                            subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
                           } else {
-                            subject = _tempSubjects?.data?.find((x:any) => x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
-                          }                     
+                            subject = null;
+                          }
 
                           let question:any = {};
                           Object.keys(colIDs).forEach((key:string)=>{
                             question[key] = row.querySelector(`#${colIDs[key]+(idx+1)}`)?.innerHTML;
+                            if(key == 'number')
+                              question[key] = Number.parseInt(question[key]);
+                            else if(key == 'answer' && !['A', 'B', 'C', 'D'].includes(question[key]))
+                              question[key] = null;
                           });
                           question['subject'] = subject;
 
                           questions.push(question);
                         });
-                        formProps.form.setFieldsValue({ questions });
+
+                        // Create missing subjects
+                        let parallelTasks:any = [];
+                        createList.forEach((sub:any) => {
+                          parallelTasks.push(createSubject({name: toSubjectCase(sub)}));
+                        });
+                        Promise.all(parallelTasks).then((res:any) => {
+                          res.forEach((response:any) => {
+                            subjectsData?.data.push(response?.data);
+
+                            let matchingQuestions = questions.filter((x:any) => toSubjectCase(x.subject) == response?.data.name);
+                            matchingQuestions.forEach((quest:any) => {
+                              quest.subject = response?.data.id;
+                            });
+                          });
+
+                          formProps.form.setFieldsValue({ questions });
+                          setFormLoading(false);
+                        }).catch(err => {
+                          console.log(err);
+                          setFormLoading(false);
+                        });
                     };
                     reader.readAsBinaryString(file);
                   }
