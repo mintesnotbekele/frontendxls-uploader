@@ -116,6 +116,7 @@ export const QuestionEdit: React.FC = () => {
 
   const submitForm = (formData: any) => {
     setFormLoading(true);
+    formData.id = history.location.pathname.split('/').pop();
     updateQuestion(formData)
       .then((res: any) => {
         history.push("/questions");
@@ -208,6 +209,38 @@ export const QuestionEdit: React.FC = () => {
     );
   };
 
+  const _buildFormSelectionItemForSubjects = ({
+    key,
+    name,
+    items,
+    callback,
+    placeholder,
+  }: any) => {
+    return (
+      <Form.Item
+        key={name + key}
+        name={name}
+        initialValue={items && items[0]?.id}
+        rules={[
+          {
+            required: true,
+            message: validationLabel,
+          },
+        ]}
+      >
+        {items && (
+          <Select
+            inputValue={items[0]?.id}
+            options={items?.map((item: any) => ({
+              label: callback ? callback(item.name) : item.name,
+              value: item.id,
+            }))}
+          />
+        )}
+      </Form.Item>
+    );
+  };
+
   return (
     <>
       <Spin spinning={formLoading}>
@@ -217,6 +250,7 @@ export const QuestionEdit: React.FC = () => {
               <Edit
                 saveButtonProps={saveButtonProps}
                 resource="question/getQuestion"
+                pageHeaderProps={{title: 'Edit Question'}}
               >
                 <Form
                   layout="vertical"
@@ -232,73 +266,96 @@ export const QuestionEdit: React.FC = () => {
                   }}
                   onFinish={submitForm}
                 >
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      {_buildFormTextEditor(
-                        "1",
-                        "metadata",
-                        "Meta Data",
-                        false
-                      )}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("2", "number", "Number")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("2", "question", "Question")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("3", "A", "First Option")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("4", "B", "Second Option")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("5", "C", "Third Option")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor("6", "D", "Fourth Option")}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormSelectionItem({
-                        key: "7",
-                        name: "answer",
-                        items: answerEnumData?.data?.answers,
-                        placeholder: "Answer",
-                        callback: getAnswersLabel,
-                      })}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormTextEditor(
-                        "8",
-                        "description",
-                        "Description",
-                        false
-                      )}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormSelectionItem({
-                        key: "9",
-                        name: "grade",
-                        items: gradeEnumData?.data?.grades,
-                        placeholder: "Grade",
-                        callback: getGradeLabel,
-                      })}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormSelectionItem({
-                        key: "10",
-                        name: "subject",
-                        items:
-                          subjectsData?.data?.map((item: any) => item.name) ??
-                          [],
-                        placeholder: "Subject",
-                      })}
-                    </Col>
-                    <Col span={12}>
-                      {_buildFormInputItem("11", "year", "Year", "number")}
-                    </Col>
-                  </Row>
+                  <div className="flex flex-col items-start">
+                    <div className="mx-5">
+                      <p className="text-gray-400 text-sm font-bold pl-2">Number</p>
+                      {_buildFormInputItem("12", "number", "Number", "number")}
+                    </div>
+
+                    
+                    <div className="flex flex-wrap">
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Metadata</p>
+                        {_buildFormTextEditor(
+                          "1",
+                          "metadata",
+                          "Meta Data",
+                          false
+                        )}                      
+                      </div>
+
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Question</p>
+                        {_buildFormTextEditor("2", "question", "Question")}
+                      </div>
+
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Description</p>
+                        {_buildFormTextEditor(
+                          "8",
+                          "description",
+                          "Description",
+                          false
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap">
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">First Option</p>
+                        {_buildFormTextEditor("3", "A", "First Option")}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Second Option</p>
+                        {_buildFormTextEditor("4", "B", "Second Option")}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Third Option</p>
+                        {_buildFormTextEditor("5", "C", "Third Option")}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Fourth Option</p>
+                        {_buildFormTextEditor("6", "D", "Fourth Option")}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap">
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Answer</p>
+                        {_buildFormSelectionItem({
+                          key: "7",
+                          name: "answer",
+                          items: answerEnumData?.data?.answers,
+                          placeholder: "Answer",
+                          callback: getAnswersLabel,
+                        })}
+                      </div>
+
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Grade</p>
+                        {_buildFormSelectionItem({
+                          key: "9",
+                          name: "grade",
+                          items: gradeEnumData?.data?.grades,
+                          placeholder: "Grade",
+                          callback: getGradeLabel,
+                        })}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Subject</p>
+                        {_buildFormSelectionItemForSubjects({
+                          key: "10",
+                          name: "subject",
+                          items: subjectsData?.data ?? [],
+                          placeholder: "Subject",
+                        })}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Year</p>
+                        {_buildFormInputItem("11", "year", "Year", "number")}
+                      </div>
+                    </div>
+                  </div>
                 </Form>
               </Edit>
             </Card>
