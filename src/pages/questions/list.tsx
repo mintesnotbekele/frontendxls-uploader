@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, OrderedListOutlined, PlusOutlined, PlusSquareOutlined, TableOutlined } from "@ant-design/icons";
 import {
   List,
   Table,
@@ -19,13 +19,19 @@ import {
   useApiUrl,
   Select,
   Spin,
+  Typography, 
+  Checkbox,
 } from "@pankod/refine";
+import { Pagination } from "antd";
 import { getQuestions, deleteQuestion } from "apis/question/question";
 import { openNotification } from "components/feedback/notification";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 const validationLabel = "Please insert a value to the input field";
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
+const { Title, Text } = Typography;
 
 const gradeNames = {
   grade_8: "Grade 8",
@@ -60,12 +66,20 @@ const generateArrayOfYears = () => {
 export const QuestionList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const [subjectFilter, setSubjectFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("");
-  const [gradeFilter, setGradeFilter] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState();
+  const [yearFilter, setYearFilter] = useState();
+  const [gradeFilter, setGradeFilter] = useState();
+  const [total, setTotal] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const [view, setView] = useState(1);
+  const history = useHistory();
   const apiUrl = useApiUrl();
+  var limit = 10;
+  var offset = 0;
 
   useEffect(() => {
+    limit = 10;
+    offset = 0;
     getQuestionData();
   }, []);
 
@@ -82,22 +96,25 @@ export const QuestionList: React.FC = () => {
     }
   );
 
-  useEffect(() => {
-    setSubjectFilter(subjectsData?.data[0]?.name);
-    setGradeFilter(gradeEnumData?.data?.grades[0]);
-    setYearFilter(generateArrayOfYears()[0]);
-  }, [subjectsData, gradeEnumData]);
+  const changePageProps = (page:number, pageSize:number) => {
+    limit = pageSize;
+    offset = page * limit - limit;
+    getQuestionData();
+  }
 
   const getQuestionData = () => {
     setIsLoading(true);
-    getQuestions({year: yearFilter, subject: subjectFilter , grade: gradeFilter})
-      .then((res: any) => {
-        setQuestions(res?.data);
-      })
-      .catch((e: any) => {
-        openNotification(`${e?.data?.message}`, "error");
-      })
-      .finally(() => setIsLoading(false));
+    console.log({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit});
+    getQuestions({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit})
+    .then((res: any) => {
+      setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
+      setTotal(res?.data?.metadata.total);
+      setQuestions(res?.data.questions);
+    })
+    .catch((e: any) => {
+      openNotification(`${e?.data?.message}`, "error");
+    })
+    .finally(() => setIsLoading(false));
   };
 
   const _deleteQuestion = (id: string) => {
@@ -120,50 +137,61 @@ export const QuestionList: React.FC = () => {
   const Filter: React.FC = () => {
     return (
       <Spin spinning={isLoadingGradeEnum || isLoadingSubjectsData || isLoading}>
-        <div className="flex gap-3">
-          <Select
-            allowClear
-            placeholder={'Grade'}
-            defaultValue={gradeFilter}
-            onChange={(val) => setGradeFilter(val)}
-          >
-            {gradeEnumData?.data?.grades?.map((grade: any) => (
-              <Option value={grade} key={grade}>
-                {getGradeLabel(grade)}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            allowClear
-            placeholder={'Subject'}
-            defaultValue={subjectFilter}
-            onChange={(val) => setSubjectFilter(val)}
-          >
-            {subjectsData?.data?.map((subject: any) => (
-              <Option value={subject?.id} key={subject?.name}>
-                {subject?.name}
-              </Option>
-            ))}
-          </Select>
-          <Select
-            allowClear
-            placeholder={'Year'}
-            defaultValue={yearFilter}
-            onChange={(val) => setYearFilter(val)}
-          >
-            {generateArrayOfYears()?.map((year: any) => (
-              <Option value={year} key={year}>
-                {year}
-              </Option>
-            ))}
-          </Select>
-          <Button
-            htmlType="submit"
-            type="primary"
-            onClick={() => getQuestionData()}
-          >
-            Search
-          </Button>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-3">
+            <Select
+              style={{minWidth: '7em'}}
+              allowClear
+              value={gradeFilter}
+              placeholder={'Grade'}
+              onChange={(val:any) => setGradeFilter(val)}
+            >
+              {gradeEnumData?.data?.grades?.map((grade: any) => (
+                <Option value={grade} key={grade}>
+                  {getGradeLabel(grade)}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              style={{minWidth: '7em'}}
+              allowClear
+              value={subjectFilter}
+              placeholder={'Subject'}
+              onChange={(val:any) => setSubjectFilter(val)}
+            >
+              {subjectsData?.data?.map((subject: any) => (
+                <Option value={subject?.id} key={subject?.name}>
+                  {subject?.name}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              style={{minWidth: '7em'}}
+              allowClear
+              value={yearFilter}
+              placeholder={'Year'}
+              onChange={(val:any) => setYearFilter(val)}
+            >
+              {generateArrayOfYears()?.map((year: any) => (
+                <Option value={year} key={year}>
+                  {year}
+                </Option>
+              ))}
+            </Select>
+            <Button
+              htmlType="submit"
+              type="primary"
+              onClick={() => getQuestionData()}
+            >
+              Search
+            </Button>
+          </div>
+          <div className="flex items-center border-2 border-gray-400 pl-3 py-1 cursor-pointer ml-auto mr-4" onClick={()=>{history.push("/questions/create");}}>
+              Create
+              <PlusOutlined className="mx-2 text-xl" />
+          </div>
+          {view == 2 && <OrderedListOutlined style={{color: '#777', fontSize: '2em'}} onClick={()=>{setView(1)}} />}
+          {view == 1 && <TableOutlined style={{color: '#777', fontSize: '2em'}} onClick={()=>{setView(2)}} />}
         </div>
       </Spin>
     );
@@ -171,145 +199,198 @@ export const QuestionList: React.FC = () => {
 
   return (
     <>
-      <div className="inline-grid">
-          <Card title="Filters">
+      <div className="inline-grid w-full">
+          <Card title="Filters" style={{marginBottom: '2em'}}>
             <Filter />
           </Card>
-          <List canCreate pageHeaderProps={{
-            className: 'w-full overflow-auto',
-          }}>
-            <Table
-              dataSource={questions}
-              loading={isLoading}
-              rowKey="id"
-              scroll={{ x: "4000px" }}
-            >
-              <Table.Column
-                dataIndex="metadata"
-                title="Meta Data"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data || "No Meta Data",
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                dataIndex="number"
-                title="Number"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data,
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                dataIndex="question"
-                title="Question"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data,
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                title="First option"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data?.A.replace(
-                          /(<? *script)/gi,
-                          "illegalscript"
-                        ),
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                title="Second option"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data?.B.replace(
-                          /(<? *script)/gi,
-                          "illegalscript"
-                        ),
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                title="Third option"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data?.C.replace(
-                          /(<? *script)/gi,
-                          "illegalscript"
-                        ),
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                title="Fourth option"
-                render={(data) => {
-                  return (
-                    <div
-                      style={{ maxWidth: "300px" }}
-                      dangerouslySetInnerHTML={{
-                        __html: data?.D.replace(
-                          /(<? *script)/gi,
-                          "illegalscript"
-                        ),
-                      }}
-                    ></div>
-                  );
-                }}
-              />
-              <Table.Column
-                title="Actions"
-                render={(question) => {
-                  return (
+          {(view == 2) && 
+            <div className="w-full overflow-auto flex flex-col pb-16">
+              <Table
+                dataSource={questions}
+                pagination={false}
+                loading={isLoading}
+                rowKey="id"
+                scroll={{ x: "4000px" }}
+              >
+                <Table.Column
+                  dataIndex="metadata"
+                  title="Meta Data"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data ? (data?.length < 150  ? data:data.substring(0, 150)+'...') : 'No metadata',
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  dataIndex="number"
+                  title="Number"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data,
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  dataIndex="question"
+                  title="Question"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data,
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="First option"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data?.A.replace(
+                            /(<? *script)/gi,
+                            "illegalscript"
+                          ),
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="Second option"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data?.B.replace(
+                            /(<? *script)/gi,
+                            "illegalscript"
+                          ),
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="Third option"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data?.C.replace(
+                            /(<? *script)/gi,
+                            "illegalscript"
+                          ),
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="Fourth option"
+                  render={(data) => {
+                    return (
+                      <div
+                        style={{ maxWidth: "300px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: data?.D.replace(
+                            /(<? *script)/gi,
+                            "illegalscript"
+                          ),
+                        }}
+                      ></div>
+                    );
+                  }}
+                />
+                <Table.Column
+                  title="Actions"
+                  render={(question) => {
+                    return (
+                      <div className="flex gap-1 items-center">
+                        <ShowButton
+                          type="link"
+                          size="middle"
+                          hideText
+                          recordItemId={question?.id}
+                        />
+                        <EditButton
+                          type="link"
+                          size="middle"
+                          hideText
+                          recordItemId={question?.id}
+                        />
+                        <Popconfirm
+                          title="Are you sure to delete this question?"
+                          onConfirm={() => _deleteQuestion(question?.id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <DeleteOutlined
+                            type="link"
+                            style={{ color: "red" }}
+                          ></DeleteOutlined>
+                        </Popconfirm>
+                      </div>
+                    );
+                  }}
+                />
+              </Table>
+              {total ? <Pagination className="self-end" defaultCurrent={1} current={current} total={total} onChange={changePageProps} /> : ''}
+          </div>}
+          {(view == 1) && 
+          <Spin spinning={isLoadingGradeEnum || isLoadingSubjectsData || isLoading}>
+            <div className="flex flex-col pb-16">
+              {questions.map((record:any) => {
+                return <div key={record.id} className="border-b-2 pb-5 mb-8">
+                  {/* Metadata */}
+                  <div
+                    className="text-gray-500 mb-5"
+                    dangerouslySetInnerHTML={{
+                      __html: record?.metadata?.replace(/(<? *script)/gi, "illegalscript"),
+                    }}
+                  ></div>
+                  {/* Question */}
+                  <div className="flex justify-between items-start">
+                    <div className="flex">
+                      <strong className="mr-3"> {record.number + '.)'} </strong>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: record?.question?.replace(/(<? *script)/gi, "illegalscript"),
+                        }}
+                      ></div>
+                    </div>
                     <div className="flex gap-1 items-center">
                       <ShowButton
                         type="link"
                         size="middle"
                         hideText
-                        recordItemId={question?.id}
+                        recordItemId={record?.id}
                       />
                       <EditButton
                         type="link"
                         size="middle"
                         hideText
-                        recordItemId={question?.id}
+                        recordItemId={record?.id}
                       />
                       <Popconfirm
                         title="Are you sure to delete this question?"
-                        onConfirm={() => _deleteQuestion(question?.id)}
+                        onConfirm={() => _deleteQuestion(record?.id)}
                         okText="Yes"
                         cancelText="No"
                       >
@@ -319,11 +400,64 @@ export const QuestionList: React.FC = () => {
                         ></DeleteOutlined>
                       </Popconfirm>
                     </div>
-                  );
-                }}
-              />
-            </Table>
-          </List>
+                  </div>
+                  {/* Description */}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: record?.description?.replace(
+                        /(<? *script)/gi,
+                        "illegalscript"
+                      ),
+                    }}
+                  ></div>
+                  {/* Answers */}
+                  <div className="mx-5">
+                    <div className="flex gap-2">
+                      <Title level={5}>
+                        <Checkbox disabled checked={record?.answer === "A"}>A.</Checkbox>
+                      </Title>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: record?.A?.replace(/(<? *script)/gi, "illegalscript"),
+                        }}
+                      ></div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Title level={5}>
+                        <Checkbox disabled checked={record?.answer === "B"}>B.</Checkbox>
+                      </Title>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: record?.B?.replace(/(<? *script)/gi, "illegalscript"),
+                        }}
+                      ></div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Title level={5}>
+                        <Checkbox disabled checked={record?.answer === "C"}>C.</Checkbox>
+                      </Title>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: record?.C?.replace(/(<? *script)/gi, "illegalscript"),
+                        }}
+                      ></div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Title level={5}>
+                        <Checkbox disabled checked={record?.answer === "D"}>D.</Checkbox>
+                      </Title>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: record?.D?.replace(/(<? *script)/gi, "illegalscript"),
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              })}
+              {total ? <Pagination className="self-end" defaultCurrent={1} current={current} total={total} onChange={changePageProps} /> : ''}
+            </div>
+          </Spin>}
       </div>
     </>
   );

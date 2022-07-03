@@ -213,7 +213,7 @@ export const QuestionCreate: React.FC = () => {
       <Form.Item
         key={name + key}
         name={name}
-        initialValue={items && items[0]}
+        initialValue={null}
         rules={[
           {
             required: true,
@@ -223,7 +223,8 @@ export const QuestionCreate: React.FC = () => {
       >
         {items && (
           <Select
-            inputValue={items[0]}
+            placeholder={placeholder}
+            dropdownStyle={{minWidth: '5em'}}
             options={items?.map((val: any) => ({
               label: callback ? callback(val) : val,
               value: val,
@@ -245,7 +246,7 @@ export const QuestionCreate: React.FC = () => {
       <Form.Item
         key={name + key}
         name={name}
-        initialValue={items && items[0]?.id}
+        initialValue={null}
         rules={[
           {
             required: true,
@@ -255,7 +256,8 @@ export const QuestionCreate: React.FC = () => {
       >
         {items && (
           <Select
-            inputValue={items[0]?.id}
+            placeholder={placeholder}
+            dropdownStyle={{minWidth: '5em'}}
             options={items?.map((item: any) => ({
               label: callback ? callback(item.name) : item.name,
               value: item.id,
