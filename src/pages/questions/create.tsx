@@ -29,7 +29,7 @@ import { createQuestion } from "apis/question/question";
 import { openNotification } from "components/feedback/notification";
 import Papa from "papaparse";
 import * as XLSX from 'xlsx';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import TextEditor from "../../components/text-editor";
 import { createSubject } from "../../apis/subject/subject.api";
@@ -358,6 +358,9 @@ export const QuestionCreate: React.FC = () => {
                           } else if (fieldName == 'year') {
                             if(!colIDs['year'])
                               colIDs['year'] = td.id.substring(0, (td.id.length-1))
+                          } else if (fieldName == 'grade') {
+                            if(!colIDs['grade'])
+                              colIDs['grade'] = td.id.substring(0, (td.id.length-1))
                           }
                         });
 
