@@ -54,6 +54,19 @@ export const UserList: React.FC = () => {
             <Table.Column dataIndex="gender" title="Gender" />
             <Table.Column dataIndex="phoneNumber" title="Phone Number" />
             <Table.Column
+              dataIndex='hasActiveSubscription'
+              title="Subscription"
+              render={(hasActiveSubscription:boolean, obj:any) => {
+                return (hasActiveSubscription != null) ? <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center'>
+                  <span className="text-sm">
+                    {new Date(obj.subscriptionExpiresAt).toLocaleDateString()}
+                    <br />
+                    {new Date(obj.subscriptionExpiresAt).toLocaleTimeString()}
+                  </span>
+                </Tag> : '';
+              }}
+            />
+            <Table.Column
               dataIndex="roles"
               title="Roles"
               render={(roles) => {

@@ -138,7 +138,7 @@ export const QuestionList: React.FC = () => {
     return (
       <Spin spinning={isLoadingGradeEnum || isLoadingSubjectsData || isLoading}>
         <div className="flex justify-between items-center">
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <Select
               style={{minWidth: '7em'}}
               allowClear
@@ -185,13 +185,18 @@ export const QuestionList: React.FC = () => {
             >
               Search
             </Button>
+
+            {view == 2 && <OrderedListOutlined className="ml-5" style={{color: '#0007', fontSize: '2.25em'}} onClick={()=>{setView(1)}} />}
+            {view == 1 && <TableOutlined className="ml-5" style={{color: '#0007', fontSize: '2.25em'}} onClick={()=>{setView(2)}} />}
+            <span className="ml-5 flex items-center text-gray-700 text-base"> Total: {total} </span>
           </div>
-          <div className="flex items-center border-2 border-gray-400 pl-3 py-1 cursor-pointer ml-auto mr-4" onClick={()=>{history.push("/questions/create");}}>
+          <div 
+            style={{transform: 'scale(.9)'}}
+            className="flex items-center text-base text-gray-700 border-2 border-gray-700 pl-3 py-1 cursor-pointer ml-auto mr-4" 
+            onClick={()=>{history.push("/questions/create");}}>
               Create
-              <PlusOutlined className="mx-2 text-xl" />
+              <PlusOutlined className="mx-2 font-bold" style={{color: '#000'}}/>
           </div>
-          {view == 2 && <OrderedListOutlined style={{color: '#777', fontSize: '2em'}} onClick={()=>{setView(1)}} />}
-          {view == 1 && <TableOutlined style={{color: '#777', fontSize: '2em'}} onClick={()=>{setView(2)}} />}
         </div>
       </Spin>
     );
