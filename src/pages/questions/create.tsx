@@ -393,6 +393,8 @@ export const QuestionCreate: React.FC = () => {
                               question[key] = Number.parseInt(question[key]);
                             else if(key == 'answer' && !['A', 'B', 'C', 'D'].includes(question[key]))
                               question[key] = null;
+                            else if(['grade', 'subject'].includes(key) )
+                              question[key] = question[key].toString().trim();
                           });
                           question['subject'] = subject;
 
