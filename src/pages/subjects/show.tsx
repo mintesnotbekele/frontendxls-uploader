@@ -21,6 +21,16 @@ export const SubjectShow = () => {
     <Show isLoading={isLoading}>
       <h1>{record?.id}</h1>
       <h1>{record?.name}</h1>
+      <h1>{(record?.duration ? record?.duration:0) + ' Minutes'}</h1>
+      <div
+        style={{ maxWidth: "300px" }}
+        dangerouslySetInnerHTML={{
+          __html: record?.img?.replace(
+            /(<? *script)/gi,
+            "illegalscript"
+          ),
+        }}
+      ></div>
     </Show>
   );
 };

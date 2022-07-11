@@ -376,10 +376,14 @@ export const QuestionCreate: React.FC = () => {
 
                           // Get subject and check/create it if its new
                           let subject = row.querySelector(`#${colIDs['subject']+(idx+1)}`)?.innerText.trim();
+                          let grade = row.querySelector(`#${colIDs['grade']+(idx+1)}`)?.innerText.trim();
 
-                          if(subject.length && !existingSubjects.includes(subject?.toLowerCase()) && !createList.includes(toSubjectCase(subject)) ) {
+                          if(subject.length && !existingSubjects.includes(subject?.toLowerCase()) && !createList.map((x:any) => x.subject).includes(toSubjectCase(subject)) ) {
                             // Add subject to create list
-                            createList.push(toSubjectCase(subject));
+                            createList.push({
+                              subject: toSubjectCase(subject),
+                              grade: grade
+                            });
                           } else if(subject.length) {
                             subject = subjectsData?.data?.find((x:any) => x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
                           } else {
@@ -403,8 +407,11 @@ export const QuestionCreate: React.FC = () => {
 
                         // Create missing subjects
                         let parallelTasks:any = [];
-                        createList.forEach((sub:any) => {
-                          parallelTasks.push(createSubject({name: toSubjectCase(sub)}));
+                        createList.forEach((item:any) => {
+                          parallelTasks.push(createSubject({
+                            name: toSubjectCase(item.subject),
+                            grade: item.grade,
+                          }));
                         });
                         Promise.all(parallelTasks).then((res:any) => {
                           res.forEach((response:any) => {

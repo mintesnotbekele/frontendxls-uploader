@@ -16,8 +16,12 @@ import {
   ShowButton,
   EditButton,
   Edit,
+  useApiUrl,
+  useCustom,
+  Select,
 } from "@pankod/refine";
 import { openNotification } from "components/feedback/notification";
+import TextEditor from "components/text-editor-image";
 
 import { useEffect, useState } from "react";
 import {
@@ -27,6 +31,22 @@ import {
   updateSubject,
 } from "../../apis/subject/subject.api";
 
+const gradeNames = {
+  grade_8: "Grade 8",
+  grade_12_social: "Grade 12 Social",
+  grade_12_natural: "Grade 12 Natural",
+};
+const getGradeLabel = (option: string) => {
+  switch (option) {
+    case "grade_8":
+      return gradeNames.grade_8;
+    case "grade_12_social":
+      return gradeNames.grade_12_social;
+    case "grade_12_natural":
+      return gradeNames.grade_12_natural;
+  }
+};
+
 export const SubjectList: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [subjects, setSubjects] = useState([]);
@@ -34,6 +54,13 @@ export const SubjectList: React.FC = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateId, setUpdateId] = useState("");
 
+  const apiUrl = useApiUrl();
+  const { data: gradeEnumData, isLoading: isLoadingGradeEnum } = useCustom<any>(
+    {
+      url: `${apiUrl}/enum/getGrade`,
+      method: "get",
+    }
+  );
   const {
     formProps,
     drawerProps: createDrawerProps,
@@ -119,6 +146,11 @@ export const SubjectList: React.FC = () => {
             <Table dataSource={subjects} loading={isLoading} rowKey="id">
               <Table.Column dataIndex="id" title="ID" />
               <Table.Column dataIndex="name" title="Subject name" />
+              <Table.Column title="Grade" render={(subject) => {
+                  return (
+                    getGradeLabel(subject.grade)
+                  );
+                }} />
               <Table.Column
                 title="Is Active"
                 render={(subject) => {
@@ -186,6 +218,50 @@ export const SubjectList: React.FC = () => {
                 ]}
               >
                 <Input />
+              </Form.Item>
+              
+              <Form.Item
+                name={"grade"}
+                initialValue={null}
+                label="Grade"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose grade",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder={"Grade"}
+                  options={gradeEnumData?.data?.grades?.map((val: any) => ({
+                    label: getGradeLabel(val),
+                    value: val,
+                  }))}
+                />
+              </Form.Item>
+              
+              <Form.Item
+                name={["duration"]}
+                label="Duration"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert Duration",
+                  },
+                ]}
+              >
+                <Input type={'number'} />
+              </Form.Item>
+
+              <Form.Item
+                labelCol={{ offset: 0 }}
+                name={["img"]}
+                label="Icon"
+              >
+                <TextEditor
+                  placeholder={'Icon'}
+                  onChange={(val: any) => null}
+                />
               </Form.Item>
             </Form>
           </Create>
