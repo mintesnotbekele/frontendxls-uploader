@@ -104,7 +104,6 @@ export const QuestionList: React.FC = () => {
 
   const getQuestionData = () => {
     setIsLoading(true);
-    console.log({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit});
     getQuestions({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit})
     .then((res: any) => {
       setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
@@ -159,11 +158,11 @@ export const QuestionList: React.FC = () => {
               placeholder={'Subject'}
               onChange={(val:any) => setSubjectFilter(val)}
             >
-              {subjectsData?.data?.map((subject: any) => (
-                <Option value={subject?.id} key={subject?.name}>
-                  {subject?.name}
-                </Option>
-              ))}
+              {subjectsData?.data?.map((subject: any) => {
+                return <Option value={subject?.id} key={subject?.id}>
+                {subject?.name}
+              </Option>
+              })}
             </Select>
             <Select
               style={{minWidth: '7em'}}

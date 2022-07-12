@@ -234,6 +234,7 @@ export const QuestionEdit: React.FC = () => {
             options={items?.map((item: any) => ({
               label: callback ? callback(item.name) : item.name,
               value: item.id,
+              key: item.id
             }))}
           />
         )}
