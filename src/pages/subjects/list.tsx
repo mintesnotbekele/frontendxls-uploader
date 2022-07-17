@@ -151,7 +151,7 @@ export const SubjectList: React.FC = () => {
                     getGradeLabel(subject.grade)
                   );
                 }} />
-              <Table.Column dataIndex="questions" title="Questions" />
+              <Table.Column dataIndex="quantity" title="Questions" />
               <Table.Column
                 title="Is Active"
                 render={(subject) => {
@@ -244,6 +244,19 @@ export const SubjectList: React.FC = () => {
               <Form.Item
                 name={["duration"]}
                 label="Duration"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert Duration",
+                  },
+                ]}
+              >
+                <Input type={'number'} />
+              </Form.Item>
+              
+              <Form.Item
+                name={["quantity"]}
+                label="Quantity"
                 rules={[
                   {
                     required: true,
