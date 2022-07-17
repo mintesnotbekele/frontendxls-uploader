@@ -151,6 +151,7 @@ export const SubjectList: React.FC = () => {
                     getGradeLabel(subject.grade)
                   );
                 }} />
+              <Table.Column dataIndex="questions" title="Questions" />
               <Table.Column
                 title="Is Active"
                 render={(subject) => {
