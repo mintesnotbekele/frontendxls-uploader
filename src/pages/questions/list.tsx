@@ -83,6 +83,10 @@ export const QuestionList: React.FC = () => {
     getQuestionData();
   }, []);
 
+  useEffect(()=>{
+    setSubjectFilter(undefined);
+  }, [gradeFilter])
+
   const { data: subjectsData, isLoading: isLoadingSubjectsData } =
     useCustom<any>({
       url: `${apiUrl}/subject/getSubjects`,
@@ -158,7 +162,7 @@ export const QuestionList: React.FC = () => {
               placeholder={'Subject'}
               onChange={(val:any) => setSubjectFilter(val)}
             >
-              {subjectsData?.data?.map((subject: any) => {
+              {subjectsData?.data?.filter((x:any) => (gradeFilter ? x.grade==gradeFilter:x)).map((subject: any) => {
                 return <Option value={subject?.id} key={subject?.id}>
                 {subject?.name}
               </Option>
