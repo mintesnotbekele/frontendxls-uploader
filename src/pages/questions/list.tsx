@@ -84,8 +84,14 @@ export const QuestionList: React.FC = () => {
   }, []);
 
   useEffect(()=>{
-    setSubjectFilter(undefined);
-  }, [gradeFilter])
+    if(gradeFilter != subjectsData?.data.find((x:any) => x.id == subjectFilter)?.grade)
+      setSubjectFilter(undefined);
+  }, [gradeFilter]);
+
+  useEffect(()=>{
+    if(!gradeFilter)
+      setGradeFilter(subjectsData?.data.find((x:any) => x.id == subjectFilter)?.grade);
+  }, [subjectFilter])
 
   const { data: subjectsData, isLoading: isLoadingSubjectsData } =
     useCustom<any>({
