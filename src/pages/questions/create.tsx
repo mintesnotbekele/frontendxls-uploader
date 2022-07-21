@@ -379,14 +379,14 @@ export const QuestionCreate: React.FC = () => {
                           let subject = row.querySelector(`#${colIDs['subject']+(idx+1)}`)?.innerText.trim();
                           let grade = row.querySelector(`#${colIDs['grade']+(idx+1)}`)?.innerText.trim();
 
-                          if(subject.length && subjectsData?.data?.findIndex((x:any)=> x.grade == grade.toString().trim() && x.name?.toString().toLowerCase() == subject?.toLowerCase().trim()) == -1 && !createList.map((x:any) => x.subject).includes(toSubjectCase(subject)) ) {
+                          if(subject.length && subjectsData?.data?.findIndex((x:any) => x.grade.toString().trim() == grade.toString().trim() && x.name?.toString().toLowerCase().trim() == subject?.toLowerCase().trim()) == -1 && !createList.map((x:any) => x.subject).includes(toSubjectCase(subject)) ) {
                             // Add subject to create list
                             createList.push({
                               subject: toSubjectCase(subject),
-                              grade: grade
+                              grade: grade.toString().trim()
                             });
                           } else if(subject.length) {
-                            subject = subjectsData?.data?.find((x:any) => x.grade == grade.toString().trim() && x.name?.toString().toLowerCase() == subject?.toLowerCase())?.id;
+                            subject = subjectsData?.data?.find((x:any) => x.grade.toString().trim() == grade.toString().trim() && x.name?.toString().toLowerCase().trim() == subject?.toLowerCase().trim())?.id;
                           } else {
                             subject = null;
                           }
