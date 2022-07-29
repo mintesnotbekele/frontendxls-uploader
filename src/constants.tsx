@@ -1,5 +1,5 @@
-export const API_URL = "http://165.22.90.219/api/v1";
-export const URL = "http://165.22.90.219";
+export const API_URL = "https://api.think-hubet.com/api/v1";
+export const URL = "https://api.think-hubet.com";
 export const TOKEN_KEY = "token";
 export const USER_KEY = "USER";
 export const PUBLIC_URLS = {
