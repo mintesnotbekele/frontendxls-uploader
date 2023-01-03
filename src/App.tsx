@@ -7,6 +7,7 @@ import { UserList } from "./pages/users/list";
 import { UserShow } from "./pages/users/show";
 import { Profile } from "./pages/profile";
 import { QuestionCreate, QuestionList, QuestionShow, QuestionEdit } from "./pages/questions";
+import { StudyCreate, StudyList, StudyShow, StudyEdit } from "./pages/study";
 import { SubjectList } from "./pages/subjects/list";
 import { SubjectShow } from "./pages/subjects/show";
 import { TOKEN_KEY, API_URL, USER_KEY } from "./constants";
@@ -18,6 +19,7 @@ import { login } from "./apis/login/login.api";
 import {Dashboard} from "./pages/dashboard";
 import {
   QuestionCircleOutlined,
+  ReadOutlined,
   SnippetsOutlined,
   UsergroupAddOutlined,
   UserOutlined,
@@ -135,6 +137,14 @@ const App: React.FC = () => {
           name: "profile",
           list: Profile,
           icon: <UserOutlined />,
+        },
+        {
+          name: "Study",
+          list: StudyList,
+          create: StudyCreate,
+          edit: StudyEdit,
+          show: StudyShow,
+          icon:  <ReadOutlined />,
         },
         {
           name: "password",
