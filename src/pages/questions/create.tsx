@@ -120,6 +120,7 @@ export const QuestionCreate: React.FC = () => {
   });
 
   const submitForm = (formData: any) => {
+    console.log("ufg");
     setFormLoading(true);
     createQuestion(formData)
       .then((res: any) => {
@@ -155,11 +156,12 @@ export const QuestionCreate: React.FC = () => {
   const _buildFormInputItem = (
     key: string,
     name: any,
+    unit: any,
     placeholder: string = "",
     type: string = "text"
   ) => {
     return (
-      <Form.Item
+      <><Form.Item
         labelCol={{ offset: 0 }}
         key={name + key}
         name={name}
@@ -173,8 +175,38 @@ export const QuestionCreate: React.FC = () => {
       >
         <Input type={type} placeholder={placeholder} />
       </Form.Item>
+      </>
+      
     );
   };
+
+  const _buildUnitFormInputItem = (
+    key: string,
+    name: any,
+    unit: any,
+    placeholder: string = "",
+    type: string = "text"
+  ) => {
+    return (
+      <><Form.Item
+        labelCol={{ offset: 0 }}
+        key={name + key}
+        name={name}
+        required={['unit'].includes(unit)}
+        rules={[
+          {
+            required: true,
+            message: validationLabel,
+          },
+        ]}
+      >
+        <Input type={type} placeholder={placeholder} />
+      </Form.Item>
+      </>
+      
+    );
+  };
+
   const _buildFormTextEditor = (
     key: string,
     name: any,
@@ -329,6 +361,9 @@ export const QuestionCreate: React.FC = () => {
                           if (fieldName == 'number') {
                             if(!colIDs['number'])
                               colIDs['number'] = td.id.substring(0, (td.id.length-1))
+                          }else if (fieldName == 'unit') {
+                            if(!colIDs['unit'])
+                              colIDs['unit'] = td.id.substring(0, (td.id.length-1))
                           } else if (fieldName == 'question') {
                             if(!colIDs['question'])
                               colIDs['question'] = td.id.substring(0, (td.id.length-1))
@@ -451,6 +486,7 @@ export const QuestionCreate: React.FC = () => {
                 questions: [
                   {
                     number: "",
+                    unit: "",
                     question: "",
                     A: "",
                     B: "",
@@ -493,6 +529,18 @@ export const QuestionCreate: React.FC = () => {
                             field.index,
                             name,
                             "number"
+                          );
+                        }}
+                      />
+                        <Table.Column
+                        title="Unit"
+                        key={"unit"}
+                        render={(field) => {
+                          const name = [field.name, "unit"];
+                          return _buildUnitFormInputItem(
+                            field.index,
+                            name,
+                            "unit"
                           );
                         }}
                       />
@@ -615,6 +663,7 @@ export const QuestionCreate: React.FC = () => {
                           });
                         }}
                       />
+                      
                       <Table.Column
                         title="Year"
                         key={"year"}

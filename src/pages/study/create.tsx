@@ -8,6 +8,7 @@ import {
   Collapse,
   Spin,
   Upload,
+  Select,
 } from "@pankod/refine";
 import { createStudy } from "apis/study/study";
 import { openNotification } from "components/feedback/notification";
@@ -18,14 +19,32 @@ import { useHistory } from "react-router-dom";
 
 
 const { Panel } = Collapse;
-
+const { Option } = Select;
 
 
 export const StudyCreate: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
-
+  const [gradeFilter, setGradeFilter] = useState();
   const history = useHistory();
   const apiUrl = useApiUrl();
+  const gradeNames = {
+    grade_8: "Grade 8",
+    grade_12_social: "Grade 12 Social",
+    grade_12_natural: "Grade 12 Natural",
+  };
+  const [subjectFilter, setSubjectFilter] = useState();
+  const getGradeLabel = (option: string) => {
+    switch (option) {
+      case "grade_8":
+        return gradeNames.grade_8;
+      case "grade_12_social":
+        return gradeNames.grade_12_social;
+      case "grade_12_natural":
+        return gradeNames.grade_12_natural;
+      default:
+        return 'Please select grade.'
+    }
+  };
 
   const { data, isLoading } = useCustom<any>({
     url: `${apiUrl}/study/getStudies`,
@@ -116,7 +135,19 @@ export const StudyCreate: React.FC = () => {
                   },
                 ]}
               >
-                <Input />
+                <Select
+              style={{minWidth: '7em'}}
+              allowClear
+              value={gradeFilter}
+              placeholder={'Grade'}
+              onChange={(val:any) => setGradeFilter(val)}
+            >
+              {gradeEnumData?.data?.grades?.map((grade: any) => (
+                <Option value={grade} key={grade}>
+                  {getGradeLabel(grade)}
+                </Option>
+              ))}
+            </Select>
               </Form.Item>
               <Form.Item
                 name={["year"]}
@@ -140,7 +171,19 @@ export const StudyCreate: React.FC = () => {
                   },
                 ]}
               >
-                <Input />
+                <Select
+              style={{minWidth: '7em'}}
+              allowClear
+              value={subjectFilter}
+              placeholder={'Subject'}
+              onChange={(val:any) => setSubjectFilter(val)}
+            >
+              {subjectsData?.data?.filter((x:any) => (gradeFilter ? x.grade==gradeFilter:x)).map((subject: any) => {
+                return <Option value={subject?.name} key={subject?.id}>
+                {subject?.name}
+              </Option>
+              })}
+            </Select>
               </Form.Item>
               <Form.Item
                 name={["title"]}

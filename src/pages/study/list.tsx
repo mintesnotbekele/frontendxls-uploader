@@ -74,11 +74,7 @@ export const StudyList: React.FC = () => {
       dataIndex: 'subject',
       key: 'subject',
     },
-    {
-      title: 'description',
-      dataIndex: 'description',
-      key: 'description',
-    },
+
     {
       title: 'unit',
       dataIndex: 'unit',
@@ -125,9 +121,7 @@ export const StudyList: React.FC = () => {
     setIsLoading(true);
     getStudies({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit})
     .then((res: any) => {
-      setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
-      setTotal(res?.data?.metadata.total);
-      setQuestions(res?.data.questions);
+      setQuestions(res.data);
     })
     .catch((e: any) => {
       openNotification(`${e?.data?.message}`, "error");
@@ -135,22 +129,6 @@ export const StudyList: React.FC = () => {
     .finally(() => setIsLoading(false));
   };
 
-  const _deleteQuestion = (id: string) => {
-    let removeIndex = questions.map((item: any) => item.id).indexOf(id);
-    setIsLoading(true);
-    deleteStudy(id)
-      .then((res: any) => {
-        const updatedQuestions = questions.filter(
-          (item: any) => item?.id !== id
-        );
-        setQuestions(updatedQuestions);
-        openNotification(`Deleted Successfully!`, "success");
-      })
-      .catch((e: any) => {
-        openNotification(`${e?.data?.message}`, "error");
-      })
-      .finally(() => setIsLoading(false));
-  };
 
   const Filter: React.FC = () => {
     return (
@@ -231,7 +209,6 @@ export const StudyList: React.FC = () => {
                 pagination={false}
                 loading={isLoading}
                 rowKey="id"
-                
                 columns={columns}
                 >
  
