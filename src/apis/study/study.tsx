@@ -29,7 +29,7 @@ export const createStudy = (params: any): any => {
 
 export const deleteStudy = (id: string): any => {
   return httpService
-    .delete(`${studyEndPoint.deleteQuestion}/${id}`)
+    .delete(`${studyEndPoint.deleteStudy}/${id}`)
     .then((response) => {
       return response;
     });

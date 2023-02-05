@@ -1,4 +1,4 @@
-import { OrderedListOutlined, PlusOutlined, TableOutlined } from "@ant-design/icons";
+import { DeleteOutlined, OrderedListOutlined, PlusOutlined, TableOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -7,6 +7,7 @@ import {
   Select,
   Spin,
   Table,
+  Popconfirm,
 } from "@pankod/refine";
 import { getStudies, deleteStudy } from "apis/study/study";
 import { openNotification } from "components/feedback/notification";
@@ -47,7 +48,7 @@ const generateArrayOfYears = () => {
 
 export const StudyList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
+  const [studies, setStudies] = useState([]);
   const [subjectFilter, setSubjectFilter] = useState();
   const [yearFilter, setYearFilter] = useState();
   const [gradeFilter, setGradeFilter] = useState();
@@ -65,11 +66,6 @@ export const StudyList: React.FC = () => {
       key: 'grade',
     },
     {
-      title: 'year',
-      dataIndex: 'year',
-      key: 'year',
-    },
-    {
       title: 'subject',
       dataIndex: 'subject',
       key: 'subject',
@@ -80,6 +76,26 @@ export const StudyList: React.FC = () => {
       dataIndex: 'unit',
       key: 'unit',
     },
+    {
+      title: "action",
+      render : (study: any) => {
+        return (
+          <div className="flex gap-1 items-center">
+            <Popconfirm
+              title="Are you sure to delete this question?"
+              onConfirm={() => _deleteStudy(study?.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <DeleteOutlined
+                type="link"
+                style={{ color: "red" }}
+              ></DeleteOutlined>
+            </Popconfirm>
+          </div>
+        );
+      }
+    }
     
   ];
   useEffect(() => {
@@ -116,12 +132,28 @@ export const StudyList: React.FC = () => {
     offset = page * limit - limit;
     getStudiesData();
   }
+  const _deleteStudy = (id: string) => {
+   
+    setIsLoading(true);
+    deleteStudy(id)
+      .then((res: any) => {
+        const updatedStudies = studies.filter(
+          (item: any) => item?.id !== id
+        );
+        setStudies(updatedStudies);
+        openNotification(`Deleted Successfully!`, "success");
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   const getStudiesData = () => {
     setIsLoading(true);
     getStudies({year: yearFilter, subject: subjectFilter , grade: gradeFilter, offset, limit})
     .then((res: any) => {
-      setQuestions(res.data);
+      setStudies(res.data);
     })
     .catch((e: any) => {
       openNotification(`${e?.data?.message}`, "error");
@@ -205,14 +237,12 @@ export const StudyList: React.FC = () => {
              <Filter /> 
           </Card> 
           <Table
-                dataSource={questions}
+                dataSource={studies}
                 pagination={false}
                 loading={isLoading}
                 rowKey="id"
                 columns={columns}
                 >
- 
-
               </Table>
       </div>
     </>
