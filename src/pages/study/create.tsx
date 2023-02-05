@@ -150,18 +150,6 @@ export const StudyCreate: React.FC = () => {
             </Select>
               </Form.Item>
               <Form.Item
-                name={["year"]}
-                label="year"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please insert year",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
                 name={["subject"]}
                 label="subject"
                 rules={[
