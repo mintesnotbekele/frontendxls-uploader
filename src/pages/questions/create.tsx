@@ -206,6 +206,40 @@ export const QuestionCreate: React.FC = () => {
       
     );
   };
+  const Option = Select;
+  const _buildSectionFormInputItem = (
+    key: string,
+    name: any,
+    unit: any,
+    placeholder: string = "Section",
+    type: string = "text"
+  ) => {
+    return (
+      <><Form.Item
+        labelCol={{ offset: 0 }}
+        key={name + key}
+        name={name}
+        
+        rules={[
+          {
+            required: true,
+            message: validationLabel,
+          },
+        ]}
+      >
+        <Select>
+          <Option value="911">
+            9-11
+          </Option>
+          <Option value="1012">
+            10-11
+          </Option>
+        </Select>
+      </Form.Item>
+      </>
+      
+    );
+  };
 
   const _buildFormTextEditor = (
     key: string,
@@ -541,6 +575,18 @@ export const QuestionCreate: React.FC = () => {
                             field.index,
                             name,
                             "unit"
+                          );
+                        }}
+                      />
+                       <Table.Column
+                        title="Section"
+                        key={"section"}
+                        render={(field) => {
+                          const name = [field.name, "section"];
+                          return _buildSectionFormInputItem(
+                            field.index,
+                            name,
+                            "section"
                           );
                         }}
                       />

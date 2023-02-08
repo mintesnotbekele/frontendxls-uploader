@@ -1,12 +1,129 @@
-import { List, Table, Col, Row, Button, Tag, Switch, ShowButton } from "@pankod/refine";
+import { OrderedListOutlined, TableOutlined } from "@ant-design/icons";
+import { List, Table, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form } from "@pankod/refine";
 import { toggleUserStatus, getUsers } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { printTable } from "./exportPDF";
+const { Option } = Select;
+
 
 export const UserList: React.FC = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [gradeFilter, setGradeFilter] = useState();
+  const [message, setMessage] = useState('');
 
+  const [updated, setUpdated] = useState(message);
+
+
+  const [phone, setPhone] = useState("");
+  
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [view, setView] = useState(1);
+  const apiUrl = useApiUrl();
+  const gradeNames = {
+    grade_8: "Grade 8",
+    grade_12_social: "Grade 12 Social",
+    grade_12_natural: "Grade 12 Natural",
+  };
+  const getGradeLabel = (option: string) => {
+    switch (option) {
+      case "grade_8":
+        return gradeNames.grade_8;
+      case "grade_12_social":
+        return gradeNames.grade_12_social;
+      case "grade_12_natural":
+        return gradeNames.grade_12_natural;
+      default:
+        return 'Please select grade.'
+    }
+  };
+  const { data: gradeEnumData, isLoading: isLoadingGradeEnum } = useCustom<any>(
+    {
+      url: `${apiUrl}/enum/getGrade`,
+      method: "get",
+    }
+    );
+    const Filter: React.FC = () => {
+      function searchUsers(formData: any): void {
+        console.log(formData);
+        if(formData.name == null && formData.grade == null && formData.phone == null)
+        getUsersData();
+        else
+        setUsers(
+          users.filter(function (el: any) {
+            return el.firstName == formData.name;
+               })
+        );
+      }
+      const searchform = (formData: any) => {
+        searchUsers(formData);
+      }
+
+
+      return (<>
+        
+        <Spin spinning={isLoadingGradeEnum || isLoading}>
+        <Form
+           name="search"
+           onFinish={searchform}
+         >
+         
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+            <Select 
+          value="export options"
+          onChange={(val:any) => {
+            
+            handleExportChange(val);
+          }}
+         >
+             <Option value="all">Export all Users</Option>
+             <Option value="subs">Export Subscribers</Option>
+         </Select>
+         <Form.Item
+           name="grade"
+          >
+              <Select
+               
+                style={{minWidth: '7em'}}
+                allowClear
+                value={gradeFilter}
+                placeholder={'Grade'}
+                onChange={(val:any) => setGradeFilter(val)}
+              >
+                {gradeEnumData?.data?.grades?.map((grade: any) => (
+                  <Option value={grade} key={grade}>
+                    {getGradeLabel(grade)}
+                  </Option>
+                ))}
+              </Select>
+              </Form.Item>
+              <Form.Item
+              name="name"
+              >
+              <Input type="text" name="name" placeholder="First Name" />
+              </Form.Item>
+              <Form.Item
+              name="phone"
+              >
+              <Input type="text" name="phone" placeholder="Phone Number"/>
+              </Form.Item>
+              <Button
+                htmlType="submit"
+                type="primary"
+               
+              >
+                Search
+              </Button>
+            
+            </div>
+          </div>
+          </Form>
+        </Spin>
+        </>
+      );
+    };
   useEffect(() => {
     getUsersData();
   }, []);
@@ -39,13 +156,26 @@ export const UserList: React.FC = () => {
       .finally(() => setIsLoading(false));
   };
 
+  function handleExportChange(val: any) {
+    if(val == "all")
+     printTable(users);
+    else if(val == "subs"){
+       const newval = users.filter(function(user: any) {
+        return user?.hasActiveSubscription == true 
+    });
+      printTable(newval);  
+    }
+  }
+
   return (
     <Row>
-      {/* <Col span={24}>
+      <Col span={24}>
         <Card>
-          <Filter formProps={searchFormProps} />
+       
+        
+          <Filter /> 
         </Card>
-      </Col> */}
+      </Col>
       <Col span={24}>
         <List>
           <Table dataSource={users} loading={isLoading} rowKey="id">
