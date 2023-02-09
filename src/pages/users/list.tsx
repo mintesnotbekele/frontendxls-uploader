@@ -46,15 +46,46 @@ export const UserList: React.FC = () => {
     );
     const Filter: React.FC = () => {
       function searchUsers(formData: any): void {
-        console.log(formData);
+        
         if(formData.name == null && formData.grade == null && formData.phone == null)
         getUsersData();
-        else
+        else if(formData.name == null && formData.grade != null && formData.phone != null){
         setUsers(
           users.filter(function (el: any) {
-            return el.firstName == formData.name;
+            return el.grade == formData.grade && el.phone == formData.phone;
                })
         );
+      }
+      else if(formData.name != null && formData.grade == null && formData.phone == null){
+        setUsers(
+          users.filter(function (el: any) {
+            return el.name == formData.name;
+               })
+        );
+      }
+      else if(formData.name == null && formData.grade == null && formData.phone != null){
+        setUsers(
+          users.filter(function (el: any) {
+            return  el.phone == formData.phone;
+               })
+        );
+      }
+      else if(formData.name != null && formData.grade == null && formData.phone == null){
+        setUsers(
+          users.filter(function (el: any) {
+            return el.phone == formData.phone;
+               })
+        );
+      }
+      else if(formData.name != null && formData.grade != null && formData.phone != null){
+        setUsers(
+          users.filter(function (el: any) {
+            return el.phone == formData.phone && el.grade == formData.grade && el.name == formData.name;
+               })
+        );
+      }
+   
+      
       }
       const searchform = (formData: any) => {
         searchUsers(formData);
@@ -143,7 +174,7 @@ export const UserList: React.FC = () => {
   const _toggleUserStatus = (id: string) => {
     setIsLoading(true);
     toggleUserStatus(id)
-      .then((res: any) => {
+      .then(() => {
         getUsersData();
         openNotification(
           "User status has been updated successfully!",
