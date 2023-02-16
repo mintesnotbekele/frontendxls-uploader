@@ -91,12 +91,9 @@ export const QuestionCreate: React.FC = () => {
   const history = useHistory();
   const apiUrl = useApiUrl();
 
-  const { data, isLoading } = useCustom<any>({
-    url: `${apiUrl}/question/getQuestions`,
-    method: "get",
-  });
 
-  const { data: subjectsData, isLoading: isLoadingSubjectsData } =
+
+  const { data: subjectsData, isLoading } =
     useCustom<any>({
       url: `${apiUrl}/subject/getSubjects`,
       method: "get",
@@ -133,25 +130,6 @@ export const QuestionCreate: React.FC = () => {
       .finally(() => setFormLoading(false));
   };
 
-  const extractTDContent = (str:string, prefix:string, suffix:string) => {
-    let matchRegex = `${prefix}(.*?)${suffix}`;
-    let regex = new RegExp(matchRegex);
-
-    let matches = str.match(regex);
-    if(matches?.length)
-      return matches[0].substring(prefix.length, matches[0].length-suffix.length);
-    
-    return '';
-
-    // return str.match(regex)[0]?.substring(
-    //   'sjs-C2">'.length,
-    //   x.match(/sjs-C2">(.*?)<\/td>/)[0].length - '</td>'.length
-    // ) 
-    // return x.match(/sjs-C2">(.*?)<\/td>/)[0]?.substring(
-    //   'sjs-C2">'.length,
-    //   x.match(/sjs-C2">(.*?)<\/td>/)[0].length - '</td>'.length
-    // ) 
-  }
 
   const _buildFormInputItem = (
     key: string,
