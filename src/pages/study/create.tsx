@@ -149,6 +149,28 @@ export const StudyCreate: React.FC = () => {
               ))}
             </Select>
               </Form.Item>
+       
+               
+              <Form.Item
+                name={["section"]}
+                label="setion"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please insert Section",
+                  },
+                ]}
+                    >
+                    <Select>
+                      <Option value="911">
+                        9-11
+                      </Option>
+                      <Option value="1012">
+                        10-12
+                      </Option>
+                    </Select>
+            </Form.Item>
+
               <Form.Item
                 name={["subject"]}
                 label="subject"
@@ -173,6 +195,9 @@ export const StudyCreate: React.FC = () => {
               })}
             </Select>
               </Form.Item>
+           
+
+
               <Form.Item
                 name={["title"]}
                 label="title"
