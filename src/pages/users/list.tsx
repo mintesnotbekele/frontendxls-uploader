@@ -47,10 +47,10 @@ export const UserList: React.FC = () => {
     const Filter: React.FC = () => {
       function searchUsers(formData: any): void {
         console.log(formData);
-        if(formData.name == undefined && formData.grade == undefined && formData.phone == undefined){
+        if((formData.name == undefined || formData.name == '') && (formData.grade == undefined ||  formData.grade == '') && (formData.phone == undefined || formData.phone == '')  ){
         getUsersData();
       }
-        else if(formData.name != undefined && formData.grade == undefined && formData.phone == undefined)
+        else if((formData.name != undefined || formData.name != '') && (formData.grade == undefined || formData.grade == '' ) && (formData.phone == undefined || formData.phone == ''))
         {
         
         setUsers(
@@ -60,7 +60,7 @@ export const UserList: React.FC = () => {
                })
         );
       }
-      else if(formData.name == undefined && formData.grade != undefined && formData.phone == undefined)
+      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined ||formData.grade != '') && (formData.phone == undefined||formData.phone == ''))
       {
         setUsers(
           users.filter(function (el: any) {
@@ -68,7 +68,7 @@ export const UserList: React.FC = () => {
                })
         );
       }
-      else if(formData.name == undefined && formData.grade == undefined && formData.phone != undefined)
+      else if((formData.name == undefined || formData.name == '')&& (formData.grade == undefined ||formData.grade == '') && (formData.phone != undefined||formData.phone != ''))
       
       {
         setUsers(
@@ -79,7 +79,7 @@ export const UserList: React.FC = () => {
       }
 
 
-      else if(formData.name != null && formData.grade != null && formData.phone == null)
+      else if((formData.name != undefined ||formData.name != '') && (formData.grade != undefined ||formData.grade != '') && (formData.phone == undefined || formData.phone == ''))
       {
         setUsers(
           users.filter(function (el: any) {
@@ -87,7 +87,7 @@ export const UserList: React.FC = () => {
                })
         );
       }
-      else if(formData.name == null && formData.grade != null && formData.phone != null)
+      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
       {
         setUsers(
           users.filter(function (el: any) {
@@ -95,7 +95,7 @@ export const UserList: React.FC = () => {
                })
             );
         }
-      else if(formData.name == null && formData.grade != null && formData.phone != null)
+      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
         {
           setUsers(
             users.filter(function (el: any) {
@@ -103,7 +103,7 @@ export const UserList: React.FC = () => {
                  })
               );
           }
-      else if(formData.name != null && formData.grade != null && formData.phone != null)
+      else if((formData.name != undefined || formData.name != '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
       {
         setUsers(
           users.filter(function (el: any) {
