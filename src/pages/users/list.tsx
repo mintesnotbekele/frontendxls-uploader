@@ -49,49 +49,71 @@ export const UserList: React.FC = () => {
         
         if(formData.name == null && formData.grade == null && formData.phone == null)
         getUsersData();
-        else if(formData.name == null && formData.grade != null && formData.phone != null){
-        setUsers(
-          users.filter(function (el: any) {
-            return el.grade == formData.grade && el.phone == formData.phone;
-               })
-        );
-      }
-      else if(formData.name != null && formData.grade == null && formData.phone == null){
+        else if(formData.name != null && formData.grade == null && formData.phone == null)
+        {
         setUsers(
           users.filter(function (el: any) {
             return el.name == formData.name;
                })
         );
       }
-      else if(formData.name == null && formData.grade == null && formData.phone != null){
+      else if(formData.name == null && formData.grade != null && formData.phone == null)
+      {
+        setUsers(
+          users.filter(function (el: any) {
+            return el.grade == formData.grade;
+               })
+        );
+      }
+      else if(formData.name == null && formData.grade == null && formData.phone != null)
+      
+      {
         setUsers(
           users.filter(function (el: any) {
             return  el.phone == formData.phone;
                })
         );
       }
-      else if(formData.name != null && formData.grade == null && formData.phone == null){
+
+
+      else if(formData.name != null && formData.grade != null && formData.phone == null)
+      {
         setUsers(
           users.filter(function (el: any) {
-            return el.phone == formData.phone;
+            return el.phone == formData.phone &&  el.name == formData.name;
                })
         );
       }
-      else if(formData.name != null && formData.grade != null && formData.phone != null){
+      else if(formData.name == null && formData.grade != null && formData.phone != null)
+      {
+        setUsers(
+          users.filter(function (el: any) {
+            return el.phone == formData.phone && el.grade == formData.grade;
+               })
+            );
+        }
+      else if(formData.name == null && formData.grade != null && formData.phone != null)
+        {
+          setUsers(
+            users.filter(function (el: any) {
+              return el.phone == formData.phone && el.grade == formData.grade;
+                 })
+              );
+          }
+      else if(formData.name != null && formData.grade != null && formData.phone != null)
+      {
         setUsers(
           users.filter(function (el: any) {
             return el.phone == formData.phone && el.grade == formData.grade && el.name == formData.name;
                })
-        );
-      }
-   
-      
+            );
+        }
+       
       }
       const searchform = (formData: any) => {
         searchUsers(formData);
       }
-
-
+      
       return (<>
         
         <Spin spinning={isLoadingGradeEnum || isLoading}>
