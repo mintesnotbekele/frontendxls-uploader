@@ -46,18 +46,21 @@ export const UserList: React.FC = () => {
     );
     const Filter: React.FC = () => {
       function searchUsers(formData: any): void {
-        
-        if(formData.name == null && formData.grade == null && formData.phone == null)
+        console.log(formData);
+        if(formData.name == undefined && formData.grade == undefined && formData.phone == undefined){
         getUsersData();
-        else if(formData.name != null && formData.grade == null && formData.phone == null)
+      }
+        else if(formData.name != undefined && formData.grade == undefined && formData.phone == undefined)
         {
+        
         setUsers(
           users.filter(function (el: any) {
-            return el.name == formData.name;
+            console.log(el);
+            return el.firstName == formData.name;
                })
         );
       }
-      else if(formData.name == null && formData.grade != null && formData.phone == null)
+      else if(formData.name == undefined && formData.grade != undefined && formData.phone == undefined)
       {
         setUsers(
           users.filter(function (el: any) {
@@ -65,12 +68,12 @@ export const UserList: React.FC = () => {
                })
         );
       }
-      else if(formData.name == null && formData.grade == null && formData.phone != null)
+      else if(formData.name == undefined && formData.grade == undefined && formData.phone != undefined)
       
       {
         setUsers(
           users.filter(function (el: any) {
-            return  el.phone == formData.phone;
+            return  el.phoneNumber == formData.phone;
                })
         );
       }
@@ -80,7 +83,7 @@ export const UserList: React.FC = () => {
       {
         setUsers(
           users.filter(function (el: any) {
-            return el.phone == formData.phone &&  el.name == formData.name;
+            return el.phoneNumber == formData.phone &&  el.firstName == formData.name;
                })
         );
       }
@@ -88,7 +91,7 @@ export const UserList: React.FC = () => {
       {
         setUsers(
           users.filter(function (el: any) {
-            return el.phone == formData.phone && el.grade == formData.grade;
+            return el.phoneNumber == formData.phone && el.grade == formData.grade;
                })
             );
         }
@@ -96,7 +99,7 @@ export const UserList: React.FC = () => {
         {
           setUsers(
             users.filter(function (el: any) {
-              return el.phone == formData.phone && el.grade == formData.grade;
+              return el.phoneNumber == formData.phone && el.grade == formData.grade;
                  })
               );
           }
@@ -104,7 +107,7 @@ export const UserList: React.FC = () => {
       {
         setUsers(
           users.filter(function (el: any) {
-            return el.phone == formData.phone && el.grade == formData.grade && el.name == formData.name;
+            return el.phoneNumber == formData.phone && el.grade == formData.grade && el.firstName == formData.name;
                })
             );
         }
@@ -138,8 +141,8 @@ export const UserList: React.FC = () => {
            name="grade"
           >
               <Select
-               
-                style={{minWidth: '7em'}}
+                 
+                style={{minWidth: '15em'}}
                 allowClear
                 value={gradeFilter}
                 placeholder={'Grade'}
