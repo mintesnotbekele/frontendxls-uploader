@@ -34,4 +34,11 @@ export const toggleUserStatus = (id : string): any => {
       return response;
     });
 };
+export const passPayment= (id: string): any=>{
+  return httpService
+  .post(`${usersEndPoint.passPayment}`, { id})
+  .then((response) => {
+    return response;
+  });
+}
 

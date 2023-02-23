@@ -1,6 +1,6 @@
 import { OrderedListOutlined, TableOutlined } from "@ant-design/icons";
 import { List, Table, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form } from "@pankod/refine";
-import { toggleUserStatus, getUsers } from "apis/users/users.api";
+import { toggleUserStatus, getUsers, passPayment } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
 import { ChangeEvent, useEffect, useState } from "react";
 import { printTable } from "./exportPDF";
@@ -107,7 +107,7 @@ export const UserList: React.FC = () => {
       {
         setUsers(
           users.filter(function (el: any) {
-            return el.phoneNumber == formData.phone && el.grade == formData.grade && el.firstName == formData.name;
+            return el.phoneNumber == formData.phone && el.grade == formData.grade && el.firstName == formData.name;  
                })
             );
         }
@@ -183,6 +183,14 @@ export const UserList: React.FC = () => {
   useEffect(() => {
     getUsersData();
   }, []);
+
+ const handlePaymentPass=(passId: string)=>{
+  
+  passPayment(passId)
+  .then(() => {
+    console.log("paid")
+  })
+ }
 
   const getUsersData = () => {
     setIsLoading(true);
@@ -279,13 +287,14 @@ export const UserList: React.FC = () => {
               render={(user) => {
                 return user?.roles?.find(
                   (role: any) => role.name === "admin"
-                ) ? null : (
+                ) ? <Button onClick={()=>handlePaymentPass(user.id)}>pay</Button> : (
                   <div className="flex gap-1 items-center">
                     <Switch
                       checked={user?.isActive}
                       onClick={() => _toggleUserStatus(user.id)}
                     ></Switch>
                     <ShowButton type="link" size="middle" hideText recordItemId={user?.id}/>
+                    <Button>pay</Button>
                   </div>
                 );
               }}
