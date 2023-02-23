@@ -185,7 +185,6 @@ export const UserList: React.FC = () => {
   }, []);
 
  const handlePaymentPass=(passId: string)=>{
-  
   passPayment(passId)
   .then(() => {
     console.log("paid")
@@ -287,14 +286,14 @@ export const UserList: React.FC = () => {
               render={(user) => {
                 return user?.roles?.find(
                   (role: any) => role.name === "admin"
-                ) ? <Button onClick={()=>handlePaymentPass(user.id)}>pay</Button> : (
+                ) ? null : (
                   <div className="flex gap-1 items-center">
                     <Switch
                       checked={user?.isActive}
                       onClick={() => _toggleUserStatus(user.id)}
                     ></Switch>
                     <ShowButton type="link" size="middle" hideText recordItemId={user?.id}/>
-                    <Button>pay</Button>
+                    <Button onClick={()=>handlePaymentPass(user.id)}>pay</Button>
                   </div>
                 );
               }}
