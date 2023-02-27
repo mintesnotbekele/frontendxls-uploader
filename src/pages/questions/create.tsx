@@ -171,12 +171,7 @@ export const QuestionCreate: React.FC = () => {
         key={name + key}
         name={name}
         required={['unit'].includes(unit)}
-        rules={[
-          {
-            required: true,
-            message: validationLabel,
-          },
-        ]}
+       
       >
         <Input type={type} placeholder={placeholder} />
       </Form.Item>
@@ -198,12 +193,7 @@ export const QuestionCreate: React.FC = () => {
         key={name + key}
         name={name}
         
-        rules={[
-          {
-            required: true,
-            message: validationLabel,
-          },
-        ]}
+   
       >
         <Select>
           <Option value="911">

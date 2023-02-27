@@ -1,9 +1,11 @@
 import { OrderedListOutlined, TableOutlined } from "@ant-design/icons";
-import { List, Table, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form } from "@pankod/refine";
+import { List, Table,message as alerts, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form } from "@pankod/refine";
 import { toggleUserStatus, getUsers, passPayment } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
 import { ChangeEvent, useEffect, useState } from "react";
 import { printTable } from "./exportPDF";
+
+
 const { Option } = Select;
 
 
@@ -184,10 +186,18 @@ export const UserList: React.FC = () => {
     getUsersData();
   }, []);
 
- const handlePaymentPass=(passId: string)=>{
+ const handlePaymentPass=(passId: any)=>{
+  
   passPayment(passId)
-  .then(() => {
-    console.log("paid")
+  .then((res: any) => {
+   if(res.body == "successfully payed")
+   {
+    alerts.success('subscription successfully payed');
+
+   }else{
+    alerts.error('Some Error occured please contact the Admin');
+   }
+   
   })
  }
 
@@ -242,34 +252,37 @@ export const UserList: React.FC = () => {
       <Col span={24}>
         <List>
           <Table dataSource={users} loading={isLoading} rowKey="id">
+           <Table.Column dataIndex="id" title="id" />
+            
             <Table.Column dataIndex="firstName" title="First Name" />
             <Table.Column dataIndex="lastName" title="Last Name" />
             <Table.Column dataIndex="gender" title="Gender" />
             <Table.Column dataIndex="phoneNumber" title="Phone Number" />
+            <Table.Column dataIndex="region" title="Region" />
             <Table.Column
               dataIndex='hasActiveSubscription'
               title="Subscription start"
               render={(hasActiveSubscription:boolean, obj:any) => {
-                  return (hasActiveSubscription != null) ? <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center mx-1'>
+                  return <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center mx-1'>
                   <span className="text-sm">
                     {new Date(obj.subscriptionStartsAt).toLocaleDateString()}
                     <br />
                     {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
                   </span>
-                </Tag> : '';
+                </Tag>;
               }}
             />
             <Table.Column
               dataIndex='hasActiveSubscription'
               title="Subscription end"
               render={(hasActiveSubscription:boolean, obj:any) => {
-                return (hasActiveSubscription != null) ? <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center'>
+                return<Tag color={hasActiveSubscription ? 'success':'red'} className='text-center'>
                   <span className="text-sm">
                     {new Date(obj.subscriptionExpiresAt).toLocaleDateString()}
                     <br />
                     {new Date(obj.subscriptionExpiresAt).toLocaleTimeString()}
                   </span>
-                </Tag> : '';
+                </Tag> ;
               }}
             />
             <Table.Column
@@ -281,12 +294,13 @@ export const UserList: React.FC = () => {
                 ));
               }}
             />
+            
             <Table.Column
               title="Actions"
               render={(user) => {
                 return user?.roles?.find(
                   (role: any) => role.name === "admin"
-                ) ? null : (
+                ) ?    <Button onClick={()=>handlePaymentPass(user.id)}>pay</Button> : (
                   <div className="flex gap-1 items-center">
                     <Switch
                       checked={user?.isActive}
