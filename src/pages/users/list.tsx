@@ -265,7 +265,8 @@ export const UserList: React.FC = () => {
               render={(hasActiveSubscription:boolean, obj:any) => {
                   return <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center mx-1'>
                   <span className="text-sm">
-                    {new Date(obj.subscriptionStartsAt).toLocaleDateString()}
+                    
+                    {new Date(obj.subscriptionStartsAt).toString()}
                     <br />
                     {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
                   </span>
@@ -277,8 +278,9 @@ export const UserList: React.FC = () => {
               title="Subscription end"
               render={(hasActiveSubscription:boolean, obj:any) => {
                 return<Tag color={hasActiveSubscription ? 'success':'red'} className='text-center'>
+                  
                   <span className="text-sm">
-                    {new Date(obj.subscriptionExpiresAt).toLocaleDateString()}
+                    {new Date(obj.start).toLocaleDateString()}
                     <br />
                     {new Date(obj.subscriptionExpiresAt).toLocaleTimeString()}
                   </span>
