@@ -266,7 +266,7 @@ export const UserList: React.FC = () => {
                   return <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center mx-1'>
                   <span className="text-sm">
                     
-                    {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
+                    {new Date(obj.subscriptionStartsAt).toLocaleDateString()}
                     <br />
                     {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
                   </span>
