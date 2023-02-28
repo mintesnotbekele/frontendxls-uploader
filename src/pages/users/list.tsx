@@ -252,7 +252,7 @@ export const UserList: React.FC = () => {
       <Col span={24}>
         <List>
           <Table dataSource={users} loading={isLoading} rowKey="id">
-           <Table.Column dataIndex="id" title="id" />
+   
             
             <Table.Column dataIndex="firstName" title="First Name" />
             <Table.Column dataIndex="lastName" title="Last Name" />
@@ -266,7 +266,7 @@ export const UserList: React.FC = () => {
                   return <Tag color={hasActiveSubscription ? 'success':'red'} className='text-center mx-1'>
                   <span className="text-sm">
                     
-                    {new Date(obj.subscriptionStartsAt).toString()}
+                    {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
                     <br />
                     {new Date(obj.subscriptionStartsAt).toLocaleTimeString()}
                   </span>
@@ -280,7 +280,7 @@ export const UserList: React.FC = () => {
                 return<Tag color={hasActiveSubscription ? 'success':'red'} className='text-center'>
                   
                   <span className="text-sm">
-                    {new Date(obj.start).toLocaleDateString()}
+                    {new Date(obj.subscriptionExpiresAt).toLocaleDateString()}
                     <br />
                     {new Date(obj.subscriptionExpiresAt).toLocaleTimeString()}
                   </span>
