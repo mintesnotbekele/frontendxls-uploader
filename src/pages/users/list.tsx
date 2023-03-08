@@ -15,8 +15,8 @@ export const UserList: React.FC = () => {
   const [gradeFilter, setGradeFilter] = useState();
   const [message, setMessage] = useState('');
 
-  const [updated, setUpdated] = useState(message);
-
+  const [updated, setUpdated] = useState(false);
+  
 
   const [phone, setPhone] = useState("");
   
@@ -184,16 +184,16 @@ export const UserList: React.FC = () => {
     };
   useEffect(() => {
     getUsersData();
-  }, []);
+  }, [updated]);
 
  const handlePaymentPass=(passId: any)=>{
   
   passPayment(passId)
   .then((res: any) => {
-   if(res.body == "successfully payed")
+   if(res.message == "successfully payed")
    {
     alerts.success('subscription successfully payed');
-
+    setUpdated(!updated);
    }else{
     alerts.error('Some Error occured please contact the Admin');
    }
