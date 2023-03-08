@@ -190,12 +190,12 @@ export const UserList: React.FC = () => {
   
   passPayment(passId)
   .then((res: any) => {
-   if(res.message == "successfully payed")
+   if(res.data.message == "successfully payed")
    {
     alerts.success('subscription successfully payed');
     setUpdated(!updated);
    }else{
-    alerts.error('Some Error occured please contact the Admin');
+    console.log(res)
    }
    
   })
