@@ -157,7 +157,7 @@ export const QuestionCreate: React.FC = () => {
       
     );
   };
-
+  const unitOptions = ["unit 1","unit 2"," unit 3","unit 4","unit 5","unit 6","unit 7","unit 8","unit 9","unit 10","unit 11","unit 12","unit 13",]
   const _buildUnitFormInputItem = (
     key: string,
     name: any,
@@ -173,7 +173,12 @@ export const QuestionCreate: React.FC = () => {
         required={['unit'].includes(unit)}
        
       >
-        <Input type={type} placeholder={placeholder} />
+         <Select>
+          
+         {unitOptions.map((item,index)=>{
+         return <Option key={index} value={item}>{item}</Option>
+     })}
+        </Select>
       </Form.Item>
       </>
       

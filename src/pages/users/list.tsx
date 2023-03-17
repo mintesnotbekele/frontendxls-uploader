@@ -1,5 +1,6 @@
 import { OrderedListOutlined, TableOutlined } from "@ant-design/icons";
 import { List, Table,message as alerts, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form } from "@pankod/refine";
+import { Pagination } from "antd";
 import { toggleUserStatus, getUsers, passPayment } from "apis/users/users.api";
 import { openNotification } from "components/feedback/notification";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -14,12 +15,14 @@ export const UserList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [gradeFilter, setGradeFilter] = useState();
   const [message, setMessage] = useState('');
-
+  const [current, setCurrent] = useState(1);
   const [updated, setUpdated] = useState(false);
   
-
+  var limit = 10;
+  const [total, setTotal] = useState(0);
+  var offset = 0;
   const [phone, setPhone] = useState("");
-  
+  const [firstName, setFirstName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [view, setView] = useState(1);
   const apiUrl = useApiUrl();
@@ -28,6 +31,11 @@ export const UserList: React.FC = () => {
     grade_12_social: "Grade 12 Social",
     grade_12_natural: "Grade 12 Natural",
   };
+  const changePageProps = (page:number, pageSize:number) => {
+    limit = pageSize;
+    offset = page * limit - limit;
+    getUsersData();
+  }
   const getGradeLabel = (option: string) => {
     switch (option) {
       case "grade_8":
@@ -46,77 +54,13 @@ export const UserList: React.FC = () => {
       method: "get",
     }
     );
+
+
+
     const Filter: React.FC = () => {
-      function searchUsers(formData: any): void {
-        console.log(formData);
-        if((formData.name == undefined || formData.name == '') && (formData.grade == undefined ||  formData.grade == '') && (formData.phone == undefined || formData.phone == '')  ){
-        getUsersData();
-      }
-        else if((formData.name != undefined || formData.name != '') && (formData.grade == undefined || formData.grade == '' ) && (formData.phone == undefined || formData.phone == ''))
-        {
-        
-        setUsers(
-          users.filter(function (el: any) {
-            console.log(el);
-            return el.firstName == formData.name;
-               })
-        );
-      }
-      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined ||formData.grade != '') && (formData.phone == undefined||formData.phone == ''))
-      {
-        setUsers(
-          users.filter(function (el: any) {
-            return el.grade == formData.grade;
-               })
-        );
-      }
-      else if((formData.name == undefined || formData.name == '')&& (formData.grade == undefined ||formData.grade == '') && (formData.phone != undefined||formData.phone != ''))
       
-      {
-        setUsers(
-          users.filter(function (el: any) {
-            return  el.phoneNumber == formData.phone;
-               })
-        );
-      }
-
-
-      else if((formData.name != undefined ||formData.name != '') && (formData.grade != undefined ||formData.grade != '') && (formData.phone == undefined || formData.phone == ''))
-      {
-        setUsers(
-          users.filter(function (el: any) {
-            return el.phoneNumber == formData.phone &&  el.firstName == formData.name;
-               })
-        );
-      }
-      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
-      {
-        setUsers(
-          users.filter(function (el: any) {
-            return el.phoneNumber == formData.phone && el.grade == formData.grade;
-               })
-            );
-        }
-      else if((formData.name == undefined || formData.name == '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
-        {
-          setUsers(
-            users.filter(function (el: any) {
-              return el.phoneNumber == formData.phone && el.grade == formData.grade;
-                 })
-              );
-          }
-      else if((formData.name != undefined || formData.name != '') && (formData.grade != undefined || formData.grade != '') && (formData.phone != undefined || formData.phone != ''))
-      {
-        setUsers(
-          users.filter(function (el: any) {
-            return el.phoneNumber == formData.phone && el.grade == formData.grade && el.firstName == formData.name;  
-               })
-            );
-        }
-       
-      }
-      const searchform = (formData: any) => {
-        searchUsers(formData);
+      const searchform = () => {
+             
       }
       
       return (<>
@@ -139,9 +83,6 @@ export const UserList: React.FC = () => {
              <Option value="all">Export all Users</Option>
              <Option value="subs">Export Subscribers</Option>
          </Select>
-         <Form.Item
-           name="grade"
-          >
               <Select
                  
                 style={{minWidth: '15em'}}
@@ -156,21 +97,12 @@ export const UserList: React.FC = () => {
                   </Option>
                 ))}
               </Select>
-              </Form.Item>
-              <Form.Item
-              name="name"
-              >
-              <Input type="text" name="name" placeholder="First Name" />
-              </Form.Item>
-              <Form.Item
-              name="phone"
-              >
-              <Input type="text" name="phone" placeholder="Phone Number"/>
-              </Form.Item>
+              <Input type="text" name="name" placeholder="First Name" onChange={(val:any) => setFirstName(val)}/>
+              <Input type="text" name="phone" placeholder="Phone Number" onChange={(val:any) => setPhoneNumber(val)}/>
               <Button
                 htmlType="submit"
                 type="primary"
-               
+                onClick={()=>{ getUsersData()}}
               >
                 Search
               </Button>
@@ -198,13 +130,15 @@ export const UserList: React.FC = () => {
     console.log(res)
    }
    
-  })
+  }) 
  }
 
   const getUsersData = () => {
     setIsLoading(true);
-    getUsers()
+    getUsers({phoneNumber: phone, firstName: firstName, grade: gradeFilter, offset, limit})
       .then((res: any) => {
+        setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
+        setTotal(res?.data?.metadata.total);
         setUsers(res?.data?.users);
       })
       .catch((e: any) => {
@@ -251,7 +185,7 @@ export const UserList: React.FC = () => {
       </Col>
       <Col span={24}>
         <List>
-          <Table dataSource={users} loading={isLoading} rowKey="id">
+          <Table  pagination={false} dataSource={users} loading={isLoading} rowKey="id">
    
             
             <Table.Column dataIndex="firstName" title="First Name" />
@@ -315,6 +249,7 @@ export const UserList: React.FC = () => {
               }}
             />
           </Table>
+          {total ? <Pagination className="self-end" defaultCurrent={1} current={current} total={total} onChange={changePageProps} /> : ''}
         </List>
       </Col>
     </Row>

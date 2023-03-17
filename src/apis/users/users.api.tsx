@@ -3,9 +3,9 @@ import { ILogin } from "interfaces/login";
 import { usersEndPoint } from "./users.endpoints";
 import { httpService } from "helpers/api-helper";
 
-export const getUsers = (): any => {
+export const getUsers = (data: any): any => {
   return httpService
-    .get(`${usersEndPoint.getUsers}`)
+    .get(`${usersEndPoint.getUsers}`, { params: data })
     .then((response) => {
       return response;
     });
