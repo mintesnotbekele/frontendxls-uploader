@@ -112,13 +112,8 @@ export const SubjectList: React.FC = () => {
   };
   function handleDeleteSubject(id: any): void {
     deleteSubject(id).then((res: any)=>{
-      if(res.data.message == "successfully payed")
-      {
-       alerts.success('subscription successfully payed');
+       alerts.success(' successfully deleted');
        setUpdated(!updated);
-      }else{
-       alerts.error('there is some error conatct your administrator');
-      }
     })
   }
 
@@ -163,6 +158,7 @@ export const SubjectList: React.FC = () => {
 
                   return (
                     <div className="flex gap-1 items-center justify-end">
+                      <Button onClick={()=>handleDeleteSubject(subject?.id)}>delete</Button>
                       <ShowButton
                         type="link"
                         title=""
@@ -181,7 +177,7 @@ export const SubjectList: React.FC = () => {
                           createDrawerShow();
                         }}
                       >
-                        <Button onClick={()=>handleDeleteSubject(subject)}>delete</Button>
+                        
                         <EditOutlined />
                       </Button>
                     </div>

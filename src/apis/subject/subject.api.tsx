@@ -33,9 +33,9 @@ export const updateSubject = (params:any): any => {
     });
 };
 
-export const deleteSubject = (params:any): any => {
+export const deleteSubject = (id: string): any => {
   return httpService
-    .delete(`${subjectEndPoint.updateSubject}`, params)
+    .delete(`${subjectEndPoint.deleteSubject}/${id}`)
     .then((response) => {
       return response;
     });
