@@ -22,6 +22,7 @@ export const UserList: React.FC = () => {
   const [total, setTotal] = useState(0);
   var offset = 0;
   const [phone, setPhone] = useState("");
+  const [activateSearch,  setActivateSearch] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [view, setView] = useState(1);
@@ -59,10 +60,18 @@ export const UserList: React.FC = () => {
 
     const Filter: React.FC = () => {
       
-      const searchform = () => {
-             
+      const searchform = (formData: any) => {
+        setFirstName(formData.firstName);
+        setPhone(formData.phoneNumber);
+        setUpdated(!updated);
       }
-      
+     
+
+      function onChangeTitle(val: string) {
+        setFirstName(val);
+        console.log(val);
+      }
+
       return (<>
         
         <Spin spinning={isLoadingGradeEnum || isLoading}>
@@ -97,12 +106,16 @@ export const UserList: React.FC = () => {
                   </Option>
                 ))}
               </Select>
-              <Input type="text" name="name" placeholder="First Name" onChange={(val:any) => setFirstName(val)}/>
-              <Input type="text" name="phone" placeholder="Phone Number" onChange={(val:any) => setPhoneNumber(val)}/>
+              <Form.Item name="firstName">
+              <Input type="text" name="name" placeholder="First Name" />
+              </Form.Item>
+              <Form.Item name="phoneNumber">
+              <Input type="text" name="phone" placeholder="Phone Number" />
+              </Form.Item>
               <Button
                 htmlType="submit"
                 type="primary"
-                onClick={()=>{ getUsersData()}}
+              
               >
                 Search
               </Button>
