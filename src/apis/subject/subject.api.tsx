@@ -35,7 +35,7 @@ export const updateSubject = (params:any): any => {
 
 export const deleteSubject = (params:any): any => {
   return httpService
-    .put(`${subjectEndPoint.updateSubject}`, params)
+    .delete(`${subjectEndPoint.updateSubject}`, params)
     .then((response) => {
       return response;
     });
