@@ -1,28 +1,12 @@
 import { EditOutlined } from "@ant-design/icons";
-import {
-  List,
-  Table,
-  Col,
-  Row,
-  Button,
-  Form,
-  Input,
-  Create,
-  Drawer,
-  useDrawerForm,
-  Spin,
-  Switch,
-  ShowButton,
-  useApiUrl,
-  useCustom,
-  Select,
-} from "@pankod/refine";
+import { List, Table,message as alerts, Col, Row, Button, Tag, Switch, ShowButton, Card, Select, Spin, useCustom, useApiUrl, Input, Form, Create, Drawer, useDrawerForm } from "@pankod/refine";
 import { openNotification } from "components/feedback/notification";
 import TextEditor from "components/text-editor-image";
 
 import { useEffect, useState } from "react";
 import {
   createSubject,
+  deleteSubject,
   getSubjects,
   toggleSubjectStatus,
   updateSubject,
@@ -50,7 +34,7 @@ export const SubjectList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateId, setUpdateId] = useState("");
-
+  const [updated, setUpdated] = useState(false);
   const apiUrl = useApiUrl();
   const { data: gradeEnumData, isLoading: isLoadingGradeEnum } = useCustom<any>(
     {
@@ -70,7 +54,7 @@ export const SubjectList: React.FC = () => {
   });
   useEffect(() => {
     getSubjectsData();
-  }, []);
+  }, [updated]);
 
   const getSubjectsData = () => {
     setIsLoading(true);
@@ -126,6 +110,17 @@ export const SubjectList: React.FC = () => {
       })
       .finally(() => setIsLoading(false));
   };
+  function handleDeleteSubject(id: any): void {
+    deleteSubject(id).then((res: any)=>{
+      if(res.data.message == "successfully payed")
+      {
+       alerts.success('subscription successfully payed');
+       setUpdated(!updated);
+      }else{
+       alerts.error('there is some error conatct your administrator');
+      }
+    })
+  }
 
   return (
     <>
@@ -164,6 +159,8 @@ export const SubjectList: React.FC = () => {
                 title="Actions"
                 align="right"
                 render={(subject) => {
+               
+
                   return (
                     <div className="flex gap-1 items-center justify-end">
                       <ShowButton
@@ -184,6 +181,7 @@ export const SubjectList: React.FC = () => {
                           createDrawerShow();
                         }}
                       >
+                        <Button onClick={()=>handleDeleteSubject(subject)}>delete</Button>
                         <EditOutlined />
                       </Button>
                     </div>

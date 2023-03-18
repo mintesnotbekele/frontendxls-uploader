@@ -4,4 +4,5 @@ export const subjectEndPoint = {
   toggleSubjectStatus:`${API_URL}/subject/toggleSubjectStatus`, 
   addSubject: `${API_URL}/subject/create`,
   updateSubject: `${API_URL}/subject/updateSubject`,
+  deleteSubject: `${API_URL}/subject/deleteSubject`, 
 };
