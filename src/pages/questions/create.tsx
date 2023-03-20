@@ -157,7 +157,7 @@ export const QuestionCreate: React.FC = () => {
       
     );
   };
-  const unitOptions = ["unit 1","unit 2"," unit 3","unit 4","unit 5","unit 6","unit 7","unit 8","unit 9","unit 10","unit 11","unit 12","unit 13",]
+  const unitOptions = ["1","2"," 3","4","5","6","7","8","9","10","11","12","13",]
   const _buildUnitFormInputItem = (
     key: string,
     name: any,
