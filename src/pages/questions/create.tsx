@@ -157,7 +157,8 @@ export const QuestionCreate: React.FC = () => {
       
     );
   };
-  const unitOptions = ["1","2"," 3","4","5","6","7","8","9","10","11","12","13",]
+  const unitOptions = ["1","2"," 3","4","5","6","7","8","9","10","11","12","13",];
+  const sections = ["911","1012"];
   const _buildUnitFormInputItem = (
     key: string,
     name: any,
@@ -189,7 +190,7 @@ export const QuestionCreate: React.FC = () => {
     key: string,
     name: any,
     unit: any,
-    placeholder: string = "Section",
+    placeholder: string = "",
     type: string = "text"
   ) => {
     return (
@@ -197,16 +198,11 @@ export const QuestionCreate: React.FC = () => {
         labelCol={{ offset: 0 }}
         key={name + key}
         name={name}
-        
-   
       >
         <Select>
-          <Option value="911">
-            9-11
-          </Option>
-          <Option value="1012">
-            10-12
-          </Option>
+        {unitOptions.map((item,index)=>{
+         return <Option key={index} value={item}>{item}</Option>
+     })}
         </Select>
       </Form.Item>
       </>
@@ -371,6 +367,9 @@ export const QuestionCreate: React.FC = () => {
                           }else if (fieldName == 'unit') {
                             if(!colIDs['unit'])
                               colIDs['unit'] = td.id.substring(0, (td.id.length-1))
+                          }else if (fieldName == 'section') {
+                            if(!colIDs['section'])
+                              colIDs['section'] = td.id.substring(0, (td.id.length-1))
                           } else if (fieldName == 'question') {
                             if(!colIDs['question'])
                               colIDs['question'] = td.id.substring(0, (td.id.length-1))
