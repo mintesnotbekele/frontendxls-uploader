@@ -127,6 +127,60 @@ export const QuestionEdit: React.FC = () => {
       })
       .finally(() => setFormLoading(false));
   };
+  const Option =Select;
+  const unitOptions = ["1","2"," 3","4","5","6","7","8","9","10","11","12","13",];
+  const sections = ["911","1012"];
+  const _buildUnitFormInputItem = (
+    key: string,
+    name: any,
+    unit: any,
+    placeholder: string = "",
+    type: string = "text"
+  ) => {
+    return (
+      <><Form.Item
+        labelCol={{ offset: 0 }}
+        key={name + key}
+        name={name}
+        required={['unit'].includes(unit)}
+       
+      >
+         <Select>
+          
+         {unitOptions.map((item,index)=>{
+         return <Option key={index} value={item}>{item}</Option>
+     })}
+        </Select>
+      </Form.Item>
+      </>
+      
+    );
+  };
+
+
+  const _buildSectionFormInputItem = (
+    key: string,
+    name: any,
+    unit: any,
+    placeholder: string = "",
+    type: string = "text"
+  ) => {
+    return (
+      <><Form.Item
+        labelCol={{ offset: 0 }}
+        key={name + key}
+        name={name}
+      >
+        <Select>
+        {unitOptions.map((item,index)=>{
+         return <Option key={index} value={item}>{item}</Option>
+     })}
+        </Select>
+      </Form.Item>
+      </>
+      
+    );
+  };
 
   const _buildFormInputItem = (
     key: string,
@@ -150,6 +204,9 @@ export const QuestionEdit: React.FC = () => {
       </Form.Item>
     );
   };
+
+  
+
   const _buildFormTextEditor = (
     key: string,
     name: any,
@@ -354,6 +411,14 @@ export const QuestionEdit: React.FC = () => {
                       <div className="mx-5">
                         <p className="text-gray-400 text-sm font-bold pl-2">Year</p>
                         {_buildFormInputItem("11", "year", "Year", "number")}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Unit</p>
+                        { _buildUnitFormInputItem("11", "unit", "unit", "number")}
+                      </div>
+                      <div className="mx-5">
+                        <p className="text-gray-400 text-sm font-bold pl-2">Section</p>
+                        { _buildSectionFormInputItem("11", "section", "section", "number")}
                       </div>
                     </div>
                   </div>
