@@ -8,6 +8,7 @@ import { UserShow } from "./pages/users/show";
 import { Profile } from "./pages/profile";
 import { QuestionCreate, QuestionList, QuestionShow, QuestionEdit } from "./pages/questions";
 import { StudyCreate, StudyList, StudyShow, StudyEdit } from "./pages/study";
+import {NotificationCreate, NotificationList, NotificationEdit } from "./pages/notification";
 import { SubjectList } from "./pages/subjects/list";
 import { SubjectShow } from "./pages/subjects/show";
 import { TOKEN_KEY, API_URL, USER_KEY } from "./constants";
@@ -143,6 +144,14 @@ const App: React.FC = () => {
           list: StudyList,
           create: StudyCreate,
           edit: StudyEdit,
+          show: StudyShow,
+          icon:  <ReadOutlined />,
+        },
+        {
+          name: "Notification",
+          list: NotificationList,
+          create: NotificationCreate,
+          edit: NotificationEdit,
           show: StudyShow,
           icon:  <ReadOutlined />,
         },

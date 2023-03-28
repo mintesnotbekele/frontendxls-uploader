@@ -1,18 +1,6 @@
 import { CopyOutlined, DollarOutlined, FormOutlined, UserOutlined } from "@ant-design/icons";
 import {
-  List,
-  Table,
-  Col,
-  Row,
-  Button,
-  Form,
-  Input,
-  Tag,
-  Create,
-  Drawer,
-  useDrawerForm,
   Spin,
-  Card,
 } from "@pankod/refine";
 import PieChart from "charts/pie-chart";
 import RadarChart from "charts/radar-chart";
