@@ -77,6 +77,11 @@ export const StudyList: React.FC = () => {
       key: 'unit',
     },
     {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
       title: "action",
       render : (study: any) => {
         return (
