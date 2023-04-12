@@ -13,7 +13,6 @@ import { getStudies, deleteStudy } from "apis/study/study";
 import { openNotification } from "components/feedback/notification";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-
 const { Option } = Select;
 
 const gradeNames = {
@@ -57,7 +56,7 @@ export const StudyList: React.FC = () => {
   const [view, setView] = useState(1);
   const history = useHistory();
   const apiUrl = useApiUrl();
-  var limit = 10;
+  var limit = 9999999;
   var offset = 0;
   const columns = [
     {
@@ -104,7 +103,7 @@ export const StudyList: React.FC = () => {
     
   ];
   useEffect(() => {
-    limit = 10;
+    limit = 999999;
     offset = 0;
     getStudiesData();
   }, []);
@@ -243,12 +242,14 @@ export const StudyList: React.FC = () => {
           </Card> 
           <Table
                 dataSource={studies}
-                pagination={false}
+                
                 loading={isLoading}
                 rowKey="id"
                 columns={columns}
+                pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30']}}
                 >
               </Table>
+
       </div>
     </>
   );
