@@ -172,6 +172,7 @@ export const UserList: React.FC = () => {
         openNotification(`${e?.data?.message}`, "error");
       })
       .finally(() => setIsLoading(false));
+  
   };
 
   const _toggleUserStatus = (id: string) => {
@@ -192,6 +193,7 @@ export const UserList: React.FC = () => {
 
   function handleExportChange(val: any) {
     getAllUsersData();
+    if(isLoading == false){
     if(val == "all")
      printTable(users);
     else if(val == "subs"){
@@ -199,7 +201,7 @@ export const UserList: React.FC = () => {
         return user?.hasActiveSubscription == true 
     });
       printTable(newval);  
-    }
+    }}
   }
 
   return (
