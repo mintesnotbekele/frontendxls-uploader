@@ -160,6 +160,20 @@ export const UserList: React.FC = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getAllUsersData = () => {
+    setIsLoading(true);
+    getUsers({phoneNumber: phone, firstName: firstName, grade: gradeFilter, offset: 0, limit: 9999999})
+      .then((res: any) => {
+        setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
+        setTotal(res?.data?.metadata.total);
+        setUsers(res?.data?.users);
+      })
+      .catch((e: any) => {
+        openNotification(`${e?.data?.message}`, "error");
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   const _toggleUserStatus = (id: string) => {
     setIsLoading(true);
     toggleUserStatus(id)
@@ -177,6 +191,7 @@ export const UserList: React.FC = () => {
   };
 
   function handleExportChange(val: any) {
+    getAllUsersData();
     if(val == "all")
      printTable(users);
     else if(val == "subs"){
