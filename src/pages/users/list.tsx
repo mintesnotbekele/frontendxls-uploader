@@ -12,6 +12,8 @@ const { Option } = Select;
 
 export const UserList: React.FC = () => {
   const [users, setUsers] = useState([]);
+  const [printusers, setPrintusers] = useState([]);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [gradeFilter, setGradeFilter] = useState();
   const [message, setMessage] = useState('');
@@ -129,6 +131,7 @@ export const UserList: React.FC = () => {
     };
   useEffect(() => {
     getUsersData();
+    getAllUsersData();
   }, [updated]);
 
  const handlePaymentPass=(passId: any)=>{
@@ -161,17 +164,17 @@ export const UserList: React.FC = () => {
   };
 
   const getAllUsersData = () => {
-    setIsLoading(true);
+
     getUsers({phoneNumber: phone, firstName: firstName, grade: gradeFilter, offset: 0, limit: 9999999})
       .then((res: any) => {
         setCurrent(res.data.metadata.offset/res.data.metadata.limit + 1);
         setTotal(res?.data?.metadata.total);
-        setUsers(res?.data?.users);
+        setPrintusers(res?.data?.users);
       })
       .catch((e: any) => {
         openNotification(`${e?.data?.message}`, "error");
       })
-      .finally(() => setIsLoading(false));
+      
   
   };
 
@@ -193,11 +196,12 @@ export const UserList: React.FC = () => {
 
   function handleExportChange(val: any) {
     getAllUsersData();
+
     if(isLoading == false){
     if(val == "all")
-     printTable(users);
+     printTable(printusers);
     else if(val == "subs"){
-       const newval = users.filter(function(user: any) {
+       const newval = printusers.filter(function(user: any) {
         return user?.hasActiveSubscription == true 
     });
       printTable(newval);  
