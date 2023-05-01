@@ -28,6 +28,7 @@ export function printTable(newVal: any) {
   ];
   const data = arr;
   autoTable(doc, {
+    showHead: 'firstPage',
     head: head,
     body: data,
     didDrawCell: (data: any) => {},
