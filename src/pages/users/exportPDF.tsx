@@ -6,7 +6,6 @@ export function printTable(newVal: any) {
     return el.roles[0].name === "user";
        });
   const arr: any = [];
-  console.log(newVal);
   Object.keys(newVal).forEach((key) => {
     arr.push([
       newVal[key].firstName,
@@ -28,11 +27,19 @@ export function printTable(newVal: any) {
   ];
   const data = arr;
   autoTable(doc, {
+<<<<<<< HEAD
     showHead: 'firstPage',
+=======
+    showHead: "firstPage",
+>>>>>>> 102d6282e1e6032255cd5685a9ea7bb4d3e5f41c
     head: head,
     body: data,
-    didDrawCell: (data: any) => {},
+    didDrawCell: (data: any) => {
+      
+    },
+    
   });
+  
   const today = new Date();
   doc.save(today + '.pdf');
 }
