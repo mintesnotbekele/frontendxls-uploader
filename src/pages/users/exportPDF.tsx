@@ -14,9 +14,7 @@ export function printTable(newVal: any) {
       newVal[key].phoneNumber,
     ]);
   });
-
   const doc = new jsPDF('l', 'mm', 'a4');
-
   const head = [
     [
       'First Name',
@@ -27,17 +25,10 @@ export function printTable(newVal: any) {
   ];
   const data = arr;
   autoTable(doc, {
-<<<<<<< HEAD
     showHead: 'firstPage',
-=======
-    showHead: "firstPage",
->>>>>>> 102d6282e1e6032255cd5685a9ea7bb4d3e5f41c
     head: head,
     body: data,
-    didDrawCell: (data: any) => {
-      
-    },
-    
+    didDrawCell: (data: any) => {},
   });
   
   const today = new Date();
